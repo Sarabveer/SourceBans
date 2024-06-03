@@ -16,88 +16,87 @@ Licensed under CC-BY-NC-SA 3.0
 Page: <http://www.sourcebans.net/> - <http://www.gameconnect.net/>
 *************************************************************************/
 
+const ADMIN_LIST_ADMINS = 		(1 << 0);
 
-var ADMIN_LIST_ADMINS = 	(1<<0);
+const ADMIN_ADD_ADMINS = 		(1 << 1);
 
-var ADMIN_ADD_ADMINS = 		(1<<1);
+const ADMIN_EDIT_ADMINS =		(1 << 2);
+const ADMIN_DELETE_ADMINS =		(1 << 3);
 
-var ADMIN_EDIT_ADMINS = 	(1<<2);
-var ADMIN_DELETE_ADMINS = 	(1<<3);
+const ADMIN_LIST_SERVERS =		(1 << 4);
+const ADMIN_ADD_SERVER =		(1 << 5);
+const ADMIN_EDIT_SERVERS =		(1 << 6);
+const ADMIN_DELETE_SERVERS =	(1 << 7);
 
-var ADMIN_LIST_SERVERS = 	(1<<4);
-var ADMIN_ADD_SERVER = 		(1<<5);
-var ADMIN_EDIT_SERVERS = 	(1<<6);
-var ADMIN_DELETE_SERVERS = 	(1<<7);
+const ADMIN_ADD_BAN =			(1 << 8);
+const ADMIN_EDIT_OWN_BANS =		(1 << 10);
+const ADMIN_EDIT_GROUP_BANS =	(1 << 11);
+const ADMIN_EDIT_ALL_BANS =		(1 << 12);
+const ADMIN_BAN_PROTESTS =		(1 << 13);
+const ADMIN_BAN_SUBMISSIONS =	(1 << 14);
+const ADMIN_DELETE_BAN =		(1 << 25);
+const ADMIN_UNBAN = 			(1 << 26);
+const ADMIN_BAN_IMPORT =		(1 << 27);
+const ADMIN_UNBAN_OWN_BANS = 	(1 << 30);
+const ADMIN_UNBAN_GROUP_BANS = 	(1 << 31);
 
-var ADMIN_ADD_BAN = 		(1<<8);
-var ADMIN_EDIT_OWN_BANS = 	(1<<10);
-var ADMIN_EDIT_GROUP_BANS = (1<<11);
-var ADMIN_EDIT_ALL_BANS = 	(1<<12);
-var ADMIN_BAN_PROTESTS = 	(1<<13);
-var ADMIN_BAN_SUBMISSIONS = (1<<14);
-var ADMIN_DELETE_BAN = 		(1<<25);
-var ADMIN_UNBAN = 			(1<<26);
-var ADMIN_BAN_IMPORT =		(1<<27);
-var ADMIN_UNBAN_OWN_BANS =	(1<<30);
-var ADMIN_UNBAN_GROUP_BANS =(1<<31);
+const ADMIN_NOTIFY_SUB =		(1 << 28);
+const ADMIN_NOTIFY_PROTEST =	(1 << 29);
 
-var ADMIN_NOTIFY_SUB =		(1<<28);
-var ADMIN_NOTIFY_PROTEST =	(1<<29);
+const ADMIN_LIST_GROUPS =		(1 << 15);
+const ADMIN_ADD_GROUP = 		(1 << 16);
+const ADMIN_EDIT_GROUPS =		(1 << 17);
+const ADMIN_DELETE_GROUPS =		(1 << 18);
 
-var ADMIN_LIST_GROUPS = 	(1<<15);
-var ADMIN_ADD_GROUP = 		(1<<16);
-var ADMIN_EDIT_GROUPS = 	(1<<17);
-var ADMIN_DELETE_GROUPS = 	(1<<18);
+const ADMIN_WEB_SETTINGS =		(1 << 19);
 
-var ADMIN_WEB_SETTINGS = 	(1<<19);
+const ADMIN_LIST_MODS =			(1 << 20);
+const ADMIN_ADD_MODS =			(1 << 21);
+const ADMIN_EDIT_MODS =			(1 << 22);
+const ADMIN_DELETE_MODS =		(1 << 23);
 
-var ADMIN_LIST_MODS = 		(1<<20);
-var ADMIN_ADD_MODS = 		(1<<21);
-var ADMIN_EDIT_MODS = 		(1<<22);
-var ADMIN_DELETE_MODS = 	(1<<23);
+const ADMIN_OWNER = 			(1 << 24);
 
-var ADMIN_OWNER = 			(1<<24);
-
-var accordion;
+let accordion;
 
 function ProcessAdminTabs()
 {
-	var url = window.location.toString();
-	var pos = url.indexOf('^')+1;
-	var tabNo = url.charAt(pos);
+	const url = window.location.toString();
+	const pos = url.indexOf('^') + 1;
+	const tabNo = url.charAt(pos);
 
-	if (Number.isInteger(tabNo))
+	if(Number.isInteger(tabNo))
 		swapTab(tabNo);
 
-	var upos = url.indexOf('~')+1;
-	var utabNo = url.charAt(upos+1);
-	var utabType = url.charAt(upos);
+	const upos = url.indexOf('~') + 1;
+	const utabNo = url.charAt(upos + 1);
+	const utabType = url.charAt(upos);
 
-	if (Number.isInteger(utabNo))
+	if(Number.isInteger(utabNo))
 		Swap2ndPane(utabNo, utabType);
 }
 
 function Swap2ndPane(id, ttype)
 {
-	var i = 0;
-	var i2 = 0;
-	if(document.getElementById("utab-" + ttype + id))
+	let i = 0;
+	let i2 = 0;
+	if(document.getElementById(`utab-${ttype}${id}`))
 	{
-		while($(document.getElementById(ttype + i)))
+		while ($(document.getElementById(ttype + i)))
 		{
 			$(document.getElementById(ttype + i)).setStyle('display', 'none');
 			i++;
 		}
-		while(i2 < 50)
+		while (i2 < 50)
 		{
-			if($("utab-" + ttype + i2))
+			if($(`utab-${ttype}${i2}`))
 			{
-				$("utab-" + ttype + i2).removeClass('active');
-				$("utab-" + ttype + i2).addClass('nonactive');
+				$(`utab-${ttype}${i2}`).removeClass('active');
+				$(`utab-${ttype}${i2}`).addClass('nonactive');
 			}
 			i2++;
 		}
-		$(document.getElementById("utab-" + ttype + id)).addClass('active');
+		$(document.getElementById(`utab-${ttype}${id}`)).addClass('active');
 		$(document.getElementById(ttype + id)).setStyle('display', 'block');
 	}
 }
@@ -105,99 +104,97 @@ function Swap2ndPane(id, ttype)
 function InitAccordion(opener, element, container, num)
 {
 	// IE6 got no window.addEventListener
-	if (window.addEventListener) {
-		window.addEventListener("load", function () {
-				InitAccordion(opener, element, container, num);
+	if(window.addEventListener) {
+		window.addEventListener('load', () => {
+			InitAccordion(opener, element, container, num);
 		}, false);
 	} else {
-		window.attachEvent('onload', function () {
-				InitAccordion(opener, element, container, num);
+		window.attachEvent('onload', () => {
+			InitAccordion(opener, element, container, num);
 		});
 	}
 
 	if(num == null)
 		num = -1;
-	var ExtendedAccordion = Accordion.extend({
-	showAll: function() {
-		var obj = {};
+	const ExtendedAccordion = Accordion.extend({
+		showAll() {
+			const obj = {};
 		 this.previous = -1;
-		this.elements.each(function(el, i){
-			obj[i] = {};
-			this.fireEvent('onActive', [this.togglers[i], el]);
-			for (var fx in this.effects) obj[i][fx] = el[this.effects[fx]];
-		}, this);
-		return this.start(obj);
-	},
-	hideAll: function() {
-		var obj = {};
+			this.elements.each(function (el, i) {
+				obj[i] = {};
+				this.fireEvent('onActive', [this.togglers[i], el]);
+				for (const fx in this.effects) obj[i][fx] = el[this.effects[fx]];
+			}, this);
+			return this.start(obj);
+		},
+		hideAll() {
+			const obj = {};
 		 this.previous = -1;
-		this.elements.each(function(el, i){
-			obj[i] = {};
-			this.fireEvent('onBackground', [this.togglers[i], el]);
-			for (var fx in this.effects) obj[i][fx] = 0;
-		}, this);
-		return this.start(obj);
-	}
-  });
+			this.elements.each(function (el, i) {
+				obj[i] = {};
+				this.fireEvent('onBackground', [this.togglers[i], el]);
+				for (const fx in this.effects) obj[i][fx] = 0;
+			}, this);
+			return this.start(obj);
+		},
+	});
 
 	accordion = new ExtendedAccordion(opener, element, {
 		opacity: true,
 		alwaysHide: true,
 		display: num,
-		transition:Fx.Transitions.Quart.easeOut,
-		onActive: function(toggler, element){
+		transition: Fx.Transitions.Quart.easeOut,
+		onActive(toggler, element) {
 			toggler.setStyle('cursor', 'pointer');
 			toggler.setStyle('background-color', '');
 		},
 
-		onBackground: function(toggler, element){
+		onBackground(toggler, element) {
 			toggler.setStyle('cursor', 'pointer');
 			toggler.setStyle('background-color', '');
-		}
+		},
 	}, $(container));
 	accordion.hideAll();
 }
 
 function ScrollRcon()
 {
-	var objDiv = document.getElementById("rcon");
+	const objDiv = document.getElementById('rcon');
 	objDiv.scrollTop = objDiv.scrollHeight;
-	//alert(objDiv.scrollTop);
+	// alert(objDiv.scrollTop);
 }
 
 function Shrink(id, time, height)
 {
-	var myEffects = $(document.getElementById(id)).effects({duration: time, transition:Fx.Transitions.Bounce.easeOut});
-	myEffects.start({'height': [height]});
+	const myEffects = $(document.getElementById(id)).effects({ duration: time, transition: Fx.Transitions.Bounce.easeOut });
+	myEffects.start({ height: [height] });
 }
 
 function FadeElOut(id, time)
 {
-	var myEffects = $(id).effects({duration: time, transition:Fx.Transitions.Sine.easeOut});
-	myEffects.start({'opacity': [0]});
-	var d = id;
-	setTimeout("$(document.getElementById('" + d + "')).setStyle('display', 'none');$(document.getElementById('" + d + "')).setOpacity(0);", time);
-
-	return;
+	const myEffects = $(id).effects({ duration: time, transition: Fx.Transitions.Sine.easeOut });
+	myEffects.start({ opacity: [0] });
+	const d = id;
+	setTimeout(`$(document.getElementById('${d}')).setStyle('display', 'none');$(document.getElementById('${d}')).setOpacity(0);`, time);
 }
 function FadeElIn(id, time)
 {
 	$(document.getElementById(id)).setStyle('display', 'block');
-	var myEffects = $(id).effects({duration: time, transition:Fx.Transitions.Sine.easeIn});
-	myEffects.start({'opacity': [1]});
-	setTimeout("$(document.getElementById('" + id + "')).setOpacity(1);", time);
-	return;
+	const myEffects = $(id).effects({ duration: time, transition: Fx.Transitions.Sine.easeIn });
+	myEffects.start({ opacity: [1] });
+	setTimeout(`$(document.getElementById('${id}')).setOpacity(1);`, time);
 }
 
 function DoLogin(redir)
 {
-	var err = 0;
+	let err = 0;
 	if(!$('loginUsername').value)
 	{
 		$('loginUsername.msg').setHTML('You must enter your loginname!');
 		$('loginUsername.msg').setStyle('display', 'block');
 		err++;
-	}else
+	}
+	else
 	{
 		$('loginUsername.msg').setHTML('');
 		$('loginUsername.msg').setStyle('display', 'none');
@@ -208,7 +205,8 @@ function DoLogin(redir)
 		$('loginPassword.msg').setHTML('You must enter your password!');
 		$('loginPassword.msg').setStyle('display', 'block');
 		err++;
-	}else
+	}
+	else
 	{
 		$('loginPassword.msg').setHTML('');
 		$('loginPassword.msg').setStyle('display', 'none');
@@ -217,27 +215,27 @@ function DoLogin(redir)
 	if(err)
 		return 0;
 
-	if(redir == "undefined")
-		redir = "";
+	if(redir == 'undefined')
+		redir = '';
 	xajax_Plogin(document.getElementById('loginUsername').value,
-				document.getElementById('loginPassword').value,
+		document.getElementById('loginPassword').value,
 				 document.getElementById('loginRememberMe').checked,
 				 redir);
 }
 
 function SlideUp(id)
 {
-	var slider = new Fx.Slide(id);
+	const slider = new Fx.Slide(id);
 	slider.slideOut().chain(
-						function(){
-							$(id).remove();
-						}
-		);
+		() => {
+			$(id).remove();
+		},
+	);
 }
 
 function RemoveGroup(id, name, type)
 {
-	var noPerm = confirm("Are you sure you want to delete the group: '" + name +"'?");
+	const noPerm = confirm(`Are you sure you want to delete the group: '${name}'?`);
 	if(noPerm == false)
 	{
 		return;
@@ -247,7 +245,7 @@ function RemoveGroup(id, name, type)
 
 function RemoveAdmin(id, name)
 {
-	var noPerm = confirm("Are you sure you want to delete '" + name +"'?");
+	const noPerm = confirm(`Are you sure you want to delete '${name}'?`);
 	if(noPerm == false)
 	{
 		return;
@@ -258,13 +256,11 @@ function RemoveAdmin(id, name)
 function RemoveSubmission(id, name, archiv)
 {
 	if(archiv == '2') {
-		var noPerm = confirm("Are you sure you want to restore the ban submission for '" + name + "' from the archive?");
-	}
-	else if(archiv == '1') {
-		var noPerm = confirm("Are you sure you want to move the ban submission for '" + name +"' to the archive?");
-	}
-	else {
-		var noPerm = confirm("Are you sure you want to delete the ban submission for '" + name +"'?");
+		var noPerm = confirm(`Are you sure you want to restore the ban submission for '${name}' from the archive?`);
+	} else if(archiv == '1') {
+		var noPerm = confirm(`Are you sure you want to move the ban submission for '${name}' to the archive?`);
+	} else {
+		var noPerm = confirm(`Are you sure you want to delete the ban submission for '${name}'?`);
 	}
 	if(noPerm == false)
 		return;
@@ -275,13 +271,11 @@ function RemoveSubmission(id, name, archiv)
 function RemoveProtest(id, name, archiv)
 {
 	if(archiv == '2') {
-		var noPerm = confirm("Are you sure you want to restore the ban protest for '" + name + "' from the archive?");
-	}
-	else if(archiv == '1') {
-		var noPerm = confirm("Are you sure you want to move the ban protest for '" + name +"' to the archive?");
-	}
-	else {
-		var noPerm = confirm("Are you sure you want to delete the ban protest for '" + name +"'?");
+		var noPerm = confirm(`Are you sure you want to restore the ban protest for '${name}' from the archive?`);
+	} else if(archiv == '1') {
+		var noPerm = confirm(`Are you sure you want to move the ban protest for '${name}' to the archive?`);
+	} else {
+		var noPerm = confirm(`Are you sure you want to delete the ban protest for '${name}'?`);
 	}
 	if(noPerm == false)
 	{
@@ -292,7 +286,7 @@ function RemoveProtest(id, name, archiv)
 
 function RemoveServer(id, name)
 {
-	var noPerm = confirm("Are you sure you want to delete the server: '" + name +"'?");
+	const noPerm = confirm(`Are you sure you want to delete the server: '${name}'?`);
 	if(noPerm == false)
 	{
 		return;
@@ -302,97 +296,96 @@ function RemoveServer(id, name)
 
 function RemoveBan(id, key, page, name, confirm, bulk)
 {
-	if(confirm==0) {
-		ShowBox('Delete Ban', 'Are you sure you want to delete the ban'+(bulk=="true"?"s":"")+' for '+(bulk=="true"?"those players":"\'"+ name +"\'")+'?', 'blue', '', true);
-		$('dialog-control').setHTML('<input type="button" onclick="RemoveBan(\''+id+'\', \''+key+'\', \''+page+'\', \''+addslashes(name.replace(/\'/g,'\\\''))+'\', \'1\''+(bulk=="true"?", \'true\'":"")+');" name="rban" class="btn ok" onmouseover="ButtonOver(\'rban\')" onmouseout="ButtonOver(\'rban\')" id="rban" value="Remove Ban" />&nbsp;<input type="button" onclick="closeMsg(\'\');$(\'bulk_action\').options[0].selected=true;" name="astop" class="btn cancel" onmouseover="ButtonOver(\'astop\')" onmouseout="ButtonOver(\'astop\')" id="astop" value="Cancel" />');
-	} else if(confirm==1) {
-		if(page != "")
+	if(confirm == 0) {
+		ShowBox('Delete Ban', `Are you sure you want to delete the ban${bulk == 'true' ? 's' : ''} for ${bulk == 'true' ? 'those players' : `\'${name}\'`}?`, 'blue', '', true);
+		$('dialog-control').setHTML(`<input type="button" onclick="RemoveBan('${id}', '${key}', '${page}', '${addslashes(name.replace(/\'/g, '\\\''))}', '1'${bulk == 'true' ? ", \'true\'" : ''});" name="rban" class="btn ok" onmouseover="ButtonOver('rban')" onmouseout="ButtonOver('rban')" id="rban" value="Remove Ban" />&nbsp;<input type="button" onclick="closeMsg('');$('bulk_action').options[0].selected=true;" name="astop" class="btn cancel" onmouseover="ButtonOver('astop')" onmouseout="ButtonOver('astop')" id="astop" value="Cancel" />`);
+	} else if(confirm == 1) {
+		if(page != '')
 			var pagelink = page;
 		else
-			var pagelink = "";
-		window.location = "index.php?p=banlist" + pagelink + "&a=delete&id="+ id +"&key="+ key +(bulk=="true"?"&bulk=true":"");
+			var pagelink = '';
+		window.location = `index.php?p=banlist${pagelink}&a=delete&id=${id}&key=${key}${bulk == 'true' ? '&bulk=true' : ''}`;
 	}
 }
 
-function UnbanBan(id, key, page, name, popup, bulk)
-{
-	if(popup==1) {
-		ShowBox('Unban Reason', '<b>Please give a short comment, why you are going to unban '+(bulk=="true"?"those players":"\'"+ name +"\'")+'!</b><br><textarea rows="3" cols="40" name="ureason" id="ureason" style="overflow:auto;"></textarea><br><div id="ureason.msg" class="badentry"></div>', 'blue', '', true);
-		$('dialog-control').setHTML('<input type="button" onclick="UnbanBan(\''+id+'\', \''+key+'\', \''+page+'\', \''+addslashes(name.replace(/\'/g,'\\\''))+'\', \'0\''+(bulk=="true"?", \'true\'":"")+');" name="uban" class="btn ok" onmouseover="ButtonOver(\'uban\')" onmouseout="ButtonOver(\'uban\')" id="uban" value="Unban Ban" />&nbsp;<input type="button" onclick="closeMsg(\'\');$(\'bulk_action\').options[0].selected=true;" name="astop" class="btn cancel" onmouseover="ButtonOver(\'astop\')" onmouseout="ButtonOver(\'astop\')" id="astop" value="Cancel" />');
-	} else if(popup==0) {
-		if(page != "")
+function UnbanBan(id, key, page, name, popup, bulk) {
+	if(popup == 1) {
+		ShowBox('Unban Reason', `<b>Please give a short comment, why you are going to unban ${bulk == 'true' ? 'those players' : `\'${name}\'`}!</b><br><textarea rows="3" cols="40" name="ureason" id="ureason" style="overflow:auto;"></textarea><br><div id="ureason.msg" class="badentry"></div>`, 'blue', '', true);
+		$('dialog-control').setHTML(`<input type="button" onclick="UnbanBan('${id}', '${key}', '${page}', '${addslashes(name.replace(/\'/g, '\\\''))}', '0'${bulk == 'true' ? ", \'true\'" : ''});" name="uban" class="btn ok" onmouseover="ButtonOver('uban')" onmouseout="ButtonOver('uban')" id="uban" value="Unban Ban" />&nbsp;<input type="button" onclick="closeMsg('');$('bulk_action').options[0].selected=true;" name="astop" class="btn cancel" onmouseover="ButtonOver('astop')" onmouseout="ButtonOver('astop')" id="astop" value="Cancel" />`);
+	} else if(popup == 0) {
+		if(page != '')
 			var pagelink = page;
 		else
-			var pagelink = "";
+			var pagelink = '';
 		reason = $('ureason').value;
-		if(reason == "") {
-			$('ureason.msg').setHTML("Please leave a comment.");
+		if(reason == '') {
+			$('ureason.msg').setHTML('Please leave a comment.');
 			$('ureason.msg').setStyle('display', 'block');
 			return;
-		} else {
-			$('ureason.msg').setHTML('');
-			$('ureason.msg').setStyle('display', 'none');
 		}
-		window.location = "index.php?p=banlist" + pagelink + "&a=unban&id="+ id +"&key="+ key +"&ureason="+ reason +(bulk=="true"?"&bulk=true":"");
+		$('ureason.msg').setHTML('');
+		$('ureason.msg').setStyle('display', 'none');
+
+		window.location = `index.php?p=banlist${pagelink}&a=unban&id=${id}&key=${key}&ureason=${reason}${bulk == 'true' ? '&bulk=true' : ''}`;
 	}
 }
 
 function BoxToSrvMask()
 {
-	var string = "";
+	let string = '';
 	if(document.getElementById('s1'))
 	{
 		if(document.getElementById('s1').checked)
-			string += "a";
+			string += 'a';
 		if(document.getElementById('s23').checked)
-			string +=  "b";
+			string += 'b';
 		if(document.getElementById('s2').checked)
-			string += "c";
+			string += 'c';
 		if(document.getElementById('s3').checked)
-			string += "d";
+			string += 'd';
 		if(document.getElementById('s4').checked)
-			string += "e";
+			string += 'e';
 		if(document.getElementById('s5').checked)
-			string += "f";
+			string += 'f';
 		if(document.getElementById('s6').checked)
-			string += "g";
+			string += 'g';
 		if(document.getElementById('s7').checked)
-			string += "h";
+			string += 'h';
 		if(document.getElementById('s8').checked)
-			string += "i";
+			string += 'i';
 		if(document.getElementById('s9').checked)
-			string += "j";
+			string += 'j';
 		if(document.getElementById('s10').checked)
-			string += "k";
+			string += 'k';
 		if(document.getElementById('s11').checked)
-			string += "l";
+			string += 'l';
 		if(document.getElementById('s12').checked)
-			string += "m";
+			string += 'm';
 		if(document.getElementById('s13').checked)
-			string += "n";
+			string += 'n';
 		if(document.getElementById('s17').checked)
-			string += "o";
+			string += 'o';
 		if(document.getElementById('s18').checked)
-			string += "p";
+			string += 'p';
 		if(document.getElementById('s19').checked)
-			string += "q";
+			string += 'q';
 		if(document.getElementById('s20').checked)
-			string += "r";
+			string += 'r';
 		if(document.getElementById('s21').checked)
-			string += "s";
+			string += 's';
 		if(document.getElementById('s22').checked)
-			string += "t";
+			string += 't';
 		if(document.getElementById('s14').checked)
-			string += "z";
+			string += 'z';
 		if(document.getElementById('immunity').value)
-			string += "#" + $('immunity').value;
+			string += `#${$('immunity').value}`;
 	}
 	return string;
 }
 
 function BoxToMask()
 {
-	var Mask = 0;
+	let Mask = 0;
 	if(document.getElementById('p4'))
 	{
 		if(document.getElementById('p4').checked)
@@ -470,25 +463,25 @@ function BoxToMask()
 
 function UpdateCheckBox(tgl, start, stop)
 {
-	for(var i=start;i<=stop;i++)
+	for (let i = start; i <= stop; i++)
 	{
-		if($('p' + i))
+		if($(`p${i}`))
 		{
-			if($('p' + tgl).checked == true)
-				$('p' + i).checked = true;
+			if($(`p${tgl}`).checked == true)
+				$(`p${i}`).checked = true;
 			else
-				$('p' + i).checked = false;
+				$(`p${i}`).checked = false;
 		}
 	}
 
 	// Other Arguments is individual items not available in the range
-	if (arguments.length > 3)
+	if(arguments.length > 3)
 	{
-		for(var lp = 4; lp <= arguments.length; lp++)
+		for (let lp = 4; lp <= arguments.length; lp++)
 		{
-			if ($('p' + arguments[lp - 1]))
+			if($(`p${arguments[lp - 1]}`))
 			{
-				$('p' + arguments[lp - 1]).checked = $('p' + tgl).checked;
+				$(`p${arguments[lp - 1]}`).checked = $(`p${tgl}`).checked;
 			}
 		}
 	}
@@ -496,8 +489,8 @@ function UpdateCheckBox(tgl, start, stop)
 
 function ProcessGroup()
 {
-	var Mask = BoxToMask();
-	var Smask = BoxToSrvMask();
+	const Mask = BoxToMask();
+	const Smask = BoxToSrvMask();
 	xajax_AddGroup(document.getElementById('groupname').value, document.getElementById('grouptype').value, Mask, Smask);
 }
 
@@ -505,44 +498,39 @@ function update_web()
 {
 	$('webperm').setHTML('');
 
-	if(document.getElementById('webg').value == "c" || document.getElementById('webg').value == "n") {
+	if(document.getElementById('webg').value == 'c' || document.getElementById('webg').value == 'n') {
 		$('web.msg').setHTML('Please Wait...');
 		$('web.msg').setStyle('display', 'block');
 	}
 
-	if(document.getElementById('webg').value == "c")
+	if(document.getElementById('webg').value == 'c')
 		var height = 390;
-	else if(document.getElementById('webg').value == "n")
+	else if(document.getElementById('webg').value == 'n')
 		var height = 410;
-	else
-	{
+	else {
 		$('webperm').setHTML('');
 		var height = 1;
 	}
 	Shrink('webperm', 1000, height);
 
-	if(document.getElementById('webg').value == "c" || document.getElementById('webg').value == "n")
-		setTimeout("xajax_UpdateAdminPermissions(1, document.getElementById('webg').value)",1000);
+	if(document.getElementById('webg').value == 'c' || document.getElementById('webg').value == 'n')
+		setTimeout("xajax_UpdateAdminPermissions(1, document.getElementById('webg').value)", 1000);
 	else {
 		$('web.msg').setHTML('');
 		$('web.msg').setStyle('display', 'none');
 	}
 }
 
-function update_server_groups()
-{
+function update_server_groups() {
 	$('nsgroup').setHTML('');
 
-	if(document.getElementById('serverg').value == "n")
-	{
+	if(document.getElementById('serverg').value == 'n') {
 		$('group.msg').setHTML('Please Wait...');
 		$('group.msg').setStyle('display', 'block');
 		var height = 50;
 		Shrink('nsgroup', 500, height);
-		setTimeout("xajax_AddServerGroupName()",500);
-	}
-	else
-	{
+		setTimeout('xajax_AddServerGroupName()', 500);
+	} else {
 		height = 5;
 		Shrink('nsgroup', 500, height);
 		$('group.msg').setHTML('');
@@ -550,43 +538,40 @@ function update_server_groups()
 	}
 }
 
-function ProcessAddAdmin()
-{
-	var Mask = BoxToMask();
-	var srvMask = BoxToSrvMask();
-	var server_a_pass = "-1";
+function ProcessAddAdmin() {
+	let Mask = BoxToMask();
+	let srvMask = BoxToSrvMask();
+	let server_a_pass = '-1';
 
 	var el = document.getElementsByName('group[]');
-	var grp = "";
-  	for(i=0;i<el.length;i++){
-    	if(el[i].checked){
-       		grp = grp + "," + el[i].value;
-    	}
-  	}
+	let grp = '';
+	for (i = 0; i < el.length; i++) {
+		if(el[i].checked) {
+				grp = `${grp},${el[i].value}`;
+		}
+	}
 
-  	var el = document.getElementsByName('servers[]');
-	var svr = "";
-  	for(i=0;i<el.length;i++){
-    	if(el[i].checked){
-       		svr = svr + "," + el[i].value;
-    	}
-  	}
+	var el = document.getElementsByName('servers[]');
+	let svr = '';
+	for (i = 0; i < el.length; i++) {
+		if(el[i].checked) {
+				svr = `${svr},${el[i].value}`;
+		}
+	}
 
-    var serverg = document.getElementById('serverg').value;
-  	if(serverg == "-3")
-  	{
-  		//serverg = "c";
-  		srvMask = "";
-  	}
-    var webg = document.getElementById('webg').value;
-  	if(webg == "-3")
-  	{
-  		//webg = "c";
-  		Mask = 0;
-  	}
+	const serverg = document.getElementById('serverg').value;
+	if(serverg == '-3') {
+		// serverg = "c";
+		srvMask = '';
+	}
+	const webg = document.getElementById('webg').value;
+	if(webg == '-3') {
+		// webg = "c";
+		Mask = 0;
+	}
 
-  	if(document.getElementById('a_useserverpass').checked)
-  		server_a_pass = document.getElementById('a_serverpass').value;
+	if(document.getElementById('a_useserverpass').checked)
+		server_a_pass = document.getElementById('a_serverpass').value;
 
 	if(document.getElementById('webname') && !document.getElementById('servername'))
 	xajax_AddAdmin(Mask,srvMask, document.getElementById('adminname').value, //Admin name
@@ -640,84 +625,80 @@ function ProcessAddAdmin()
 					0,
 					grp,
 					svr);
-
 }
 
 function ProcessEditAdminPermissions()
 {
-	var Mask = BoxToMask();
-	var srvMask = BoxToSrvMask();
-	var aid = $('admin_id').value;
+	const Mask = BoxToMask();
+	const srvMask = BoxToSrvMask();
+	const aid = $('admin_id').value;
 
 	if($('immunity'))
 	{
 	 	if(IsNumeric($('immunity').value))
 			xajax_EditAdminPerms(aid, Mask, srvMask);
 		else
-			ShowBox("Error", "Immunity must be a numerical value (0-9)", "red", "", true);
-	}else
+			ShowBox('Error', 'Immunity must be a numerical value (0-9)', 'red', '', true);
+	} else
 		xajax_EditAdminPerms(aid, Mask, srvMask);
 }
 
 function ProcessEditGroup(type, name)
 {
+	const Mask = BoxToMask();
+	const srvMask = BoxToSrvMask();
+	const group = $('group_id').value;
 
-	var Mask = BoxToMask();
-	var srvMask = BoxToSrvMask();
-	var group = $('group_id').value;
-
-	if(name == "")
+	if(name == '')
 	{
-		ShowBox("Error", "You have to type a name for the group.", "red", "", true);
+		ShowBox('Error', 'You have to type a name for the group.', 'red', '', true);
 		$('groupname.msg').innerHTML = 'You have to type a name for the group.';
 		$('groupname.msg').setStyle('display', 'block');
 		return;
 	}
-	else
-	{
-		$('groupname.msg').innerHTML = '';
-		$('groupname.msg').setStyle('display', 'none');
-	}
+
+	$('groupname.msg').innerHTML = '';
+	$('groupname.msg').setStyle('display', 'none');
 
 	if($('immunity') && !IsNumeric($('immunity').value))
 	{
-		ShowBox("Error", "Immunity must be a numerical value (0-9)", "red", "", true);
+		ShowBox('Error', 'Immunity must be a numerical value (0-9)', 'red', '', true);
 		return;
 	}
 
-	var overrides = [];
-	var new_override = {};
+	let overrides = [];
+	let new_override = {};
 
 	// Handle group overrides
-	if(type == "srv")
+	if(type == 'srv')
 	{
-		var override_id = document.group_overrides_form.elements["override_id[]"];
+		let override_id = document.group_overrides_form.elements['override_id[]'];
 		// Are there any old overrides to change?
 		if(override_id != null)
 		{
-			var override_type = document.group_overrides_form.elements["override_type[]"];
-			var override_name = document.group_overrides_form.elements["override_name[]"];
-			var override_access = document.group_overrides_form.elements["override_access[]"];
+			let override_type = document.group_overrides_form.elements['override_type[]'];
+			let override_name = document.group_overrides_form.elements['override_name[]'];
+			let override_access = document.group_overrides_form.elements['override_access[]'];
 
 			// Make sure they're arrays!
-			if($type(override_id) == "element")
+			if($type(override_id) == 'element')
 				override_id = [override_id];
-			if($type(override_type) == "element")
+			if($type(override_type) == 'element')
 				override_type = [override_type];
-			if($type(override_name) == "element")
+			if($type(override_name) == 'element')
 				override_name = [override_name];
-			if($type(override_access) == "element")
+			if($type(override_access) == 'element')
 				override_access = [override_access];
 
 			overrides = {};
 
-			for(var i=0;i<override_id.length;i++)
+			for (let i = 0; i < override_id.length; i++)
 			{
-				overrides[i] = {'id': override_id[i].value, 'type': override_type[i][override_type[i].selectedIndex].value, 'name': override_name[i].value, 'access': override_access[i][override_access[i].selectedIndex].value};
+				overrides[i] = { id: override_id[i].value, type: override_type[i][override_type[i].selectedIndex].value, name: override_name[i].value, access: override_access[i][override_access[i].selectedIndex].value};
 			}
 		}
 
-		new_override = {'type': $('new_override_type')[$('new_override_type').selectedIndex].value, 'name': $('new_override_name').value, 'access': $('new_override_access')[$('new_override_access').selectedIndex].value};
+		new_override = { type: $('new_override_type')[$('new_override_type').selectedIndex].value, name: $('new_override_name').value, access: $('new_override_access')[$('new_override_access').selectedIndex].value };
 	}
 
 	xajax_EditGroup(group, Mask, srvMask, type, name, JSON.stringify(overrides), JSON.stringify(new_override));
@@ -727,24 +708,23 @@ function update_server()
 {
 	$('serverperm').setHTML('');
 
-	if(document.getElementById('serverg').value == "c" || document.getElementById('serverg').value == "n") {
+	if(document.getElementById('serverg').value == 'c' || document.getElementById('serverg').value == 'n') {
 		$('server.msg').setHTML('Please Wait...');
 		$('server.msg').setStyle('display', 'block');
 	}
 
-	if(document.getElementById('serverg').value == "c")
+	if(document.getElementById('serverg').value == 'c')
 		var height = 580;
-	else if(document.getElementById('serverg').value == "n")
+	else if(document.getElementById('serverg').value == 'n')
 		var height = 590;
-	else
-	{
+	else {
 		$('serverperm').setHTML('');
 		var height = 1;
 	}
 	Shrink('serverperm', 1000, height);
 
-	if(document.getElementById('serverg').value == "c" || document.getElementById('serverg').value == "n")
-		setTimeout("xajax_UpdateAdminPermissions(2, document.getElementById('serverg').value)",1000);
+	if(document.getElementById('serverg').value == 'c' || document.getElementById('serverg').value == 'n')
+		setTimeout("xajax_UpdateAdminPermissions(2, document.getElementById('serverg').value)", 1000);
 	else {
 		$('server.msg').setHTML('');
 		$('server.msg').setStyle('display', 'none');
@@ -753,13 +733,15 @@ function update_server()
 
 function process_add_server()
 {
-	var el = document.getElementsByName('groups[]');
-	var grp = "";
-  	for(i=0;i<el.length;i++){
-    	if(el[i].checked){
-       		grp = grp + "," + el[i].value;
-    	}
-  	}
+	const el = document.getElementsByName('groups[]');
+	let grp = '';
+	for (i = 0; i < el.length; i++)
+	{
+		if(el[i].checked)
+		{
+			grp = `${grp},${el[i].value}`;
+		}
+	}
 	xajax_AddServer(document.getElementById('address').value,
 				document.getElementById('port').value,
 				document.getElementById('rcon').value,
@@ -768,99 +750,99 @@ function process_add_server()
 				document.getElementById('enabled').checked,
 				grp,
 				-1);
-
 }
 
 function process_edit_server()
 {
-    if($('rcon').value != $('rcon2').value)
-    {
-        $('rcon2.msg').innerHTML = 'Passwords don\'t match.';
-        $('rcon2.msg').setStyle('display', 'block');
-        return;
-    }
+	if($('rcon').value != $('rcon2').value)
+	{
+		$('rcon2.msg').innerHTML = 'Passwords don\'t match.';
+		$('rcon2.msg').setStyle('display', 'block');
+		return;
+	}
 
-    $('rcon2.msg').setStyle('display', 'none');
+	$('rcon2.msg').setStyle('display', 'none');
 	document.forms.editserver.submit();
 }
 
 function search_bans()
 {
-	var type = "";
-	var input = "";
+	let type = '';
+	let input = '';
 	if($('name').checked)
 	{
-		type = "name";
+		type = 'name';
 		input = $('nick').value;
 	}
 	if($('steam_').checked)
 	{
-		type = (document.getElementById('steam_match').value == "1" ? "steam" : "steamid");
+		type = (document.getElementById('steam_match').value == '1' ? 'steam' : 'steamid');
 		input = $('steamid').value;
 	}
 	if($('ip_').checked)
 	{
-		type = "ip";
+		type = 'ip';
 		input = $('ip').value;
 	}
 	if($('reason_').checked)
 	{
-		type = "reason";
+		type = 'reason';
 		input = $('ban_reason').value;
 	}
 	if($('date').checked)
 	{
-		type = "date";
-		input = $('day').value + "," + $('month').value + "," + $('year').value;
+		type = 'date';
+		input = `${$('day').value},${$('month').value},${$('year').value}`;
 	}
 	if($('length_').checked)
 	{
-		type = "length";
-		if($('length').value=="other")
+		type = 'length';
+		if($('length').value == 'other')
 			var length = $('other_length').value;
 		else
-			var length = $('length').value
-		input = $('length_type').value + "," + length;
+			var length = $('length').value;
+		input = `${$('length_type').value},${length}`;
 	}
 	if($('ban_type_').checked)
 	{
-		type = "btype";
+		type = 'btype';
 		input = $('ban_type').value;
 	}
 	if($('bancount').checked)
 	{
-		type = "bancount";
+		type = 'bancount';
 		input = $('timesbanned').value;
 	}
 	if($('admin').checked)
 	{
-		type = "admin";
+		type = 'admin';
 		input = $('ban_admin').value;
 	}
 	if($('where_banned').checked)
 	{
-		type = "where_banned";
+		type = 'where_banned';
 		input = $('server').value;
 	}
 	if($('comment_').checked)
 	{
-		type = "comment";
+		type = 'comment';
 		input = $('ban_comment').value;
 	}
-	if(type!="" && input!="")
-		window.location = "index.php?p=banlist&advSearch=" + input + "&advType=" + type;
+	if(type != '' && input != '')
+		window.location = `index.php?p=banlist&advSearch=${input}&advType=${type}`;
 }
-var webSelected = new Array();
-var srvSelected = new Array();
+
+const webSelected = new Array();
+const srvSelected = new Array();
 function getMultiple(ob, type) {
-	if(type==1) {
+	if(type == 1) {
 		while (ob.selectedIndex != -1)
 		{
 			webSelected.push(ob.options[ob.selectedIndex].value);
 			ob.options[ob.selectedIndex].selected = false;
 		}
 	}
-	if(type==2) {
+	if(type == 2) {
 		while (ob.selectedIndex != -1)
 		{
 			srvSelected.push(ob.options[ob.selectedIndex].value);
@@ -870,113 +852,111 @@ function getMultiple(ob, type) {
 }
 function search_admins()
 {
-	var type = "";
-	var input = "";
+	let type = '';
+	let input = '';
 	if($('name_').checked)
 	{
-		type = "name";
+		type = 'name';
 		input = $('nick').value;
 	}
 	if($('steam_').checked)
 	{
-		type = (document.getElementById('steam_match').value == "1" ? "steam" : "steamid");
+		type = (document.getElementById('steam_match').value == '1' ? 'steam' : 'steamid');
 		input = $('steamid').value;
 	}
 	if($('admemail_').checked)
 	{
-		type = "admemail";
+		type = 'admemail';
 		input = $('admemail').value;
 	}
 	if($('webgroup_').checked)
 	{
-		type = "webgroup";
+		type = 'webgroup';
 		input = $('webgroup').value;
 	}
 	if($('srvadmgroup_').checked)
 	{
-		type = "srvadmgroup";
+		type = 'srvadmgroup';
 		input = $('srvadmgroup').value;
 	}
 	if($('srvgroup_').checked)
 	{
-		type = "srvgroup";
+		type = 'srvgroup';
 		input = $('srvgroup').value;
 	}
 	if($('admwebflags_').checked)
 	{
-		type = "admwebflag";
+		type = 'admwebflag';
 		input = webSelected.toString();
 	}
 	if($('admsrvflags_').checked)
 	{
-		type = "admsrvflag";
+		type = 'admsrvflag';
 		input = srvSelected.toString();
 	}
 	if($('admin_on_').checked)
 	{
-		type = "server";
+		type = 'server';
 		input = $('server').value;
 	}
-	if(type!="" && input!="")
-		window.location = "index.php?p=admin&c=admins&advSearch=" + input + "&advType=" + type;
+	if(type != '' && input != '')
+		window.location = `index.php?p=admin&c=admins&advSearch=${input}&advType=${type}`;
 }
 
 function search_log()
 {
-	var type = "";
-	var input = "";
+	let type = '';
+	let input = '';
 	if($('admin_').checked)
 	{
-		type = "admin";
+		type = 'admin';
 		input = $('admin').value;
 	}
 	if($('message_').checked)
 	{
-		type = "message";
+		type = 'message';
 		input = $('message').value;
 	}
 	if($('date_').checked)
 	{
-		type = "date";
-		input = $('day').value + "," + $('month').value + "," + $('year').value + "," + $('fhour').value + "," + $('fminute').value + "," + $('thour').value + "," + $('tminute').value;
+		type = 'date';
+		input = `${$('day').value},${$('month').value},${$('year').value},${$('fhour').value},${$('fminute').value},${$('thour').value},${$('tminute').value}`;
 	}
 	if($('type_').checked)
 	{
-		type = "type";
+		type = 'type';
 		input = $('type').value;
 	}
-	if(type!="" && input!="")
-		window.location = "index.php?p=admin&c=settings&advSearch=" + input + "&advType=" + type + "#^2";
+	if(type != '' && input != '')
+		window.location = `index.php?p=admin&c=settings&advSearch=${input}&advType=${type}#^2`;
 }
-var icname = "";
+
+let icname = '';
 function icon(name)
 {
-	$('icon.msg').setHTML("Uploaded: <b>" + name + "</b>");
+	$('icon.msg').setHTML(`Uploaded: <b>${name}</b>`);
 	icname = name;
 	if($('icon_hid'))
 		$('icon_hid').value = name;
 }
+
 function ProcessMod()
 {
-	var err = 0;
-	if(!$('name').value)
-	{
+	let err = 0;
+	if(!$('name').value) {
 		$('name.msg').setHTML('You must enter the name of the mod you are adding.');
 		$('name.msg').setStyle('display', 'block');
 		err++;
-	}else
-	{
+	} else {
 		$('name.msg').setHTML('');
 		$('name.msg').setStyle('display', 'none');
 	}
 
-	if(!$('folder').value)
-	{
+	if(!$('folder').value) {
 		$('folder.msg').setHTML('You must enter mod\'s folder name.');
 		$('folder.msg').setStyle('display', 'block');
 		err++;
-	}else
-	{
+	} else {
 		$('folder.msg').setHTML('');
 		$('folder.msg').setStyle('display', 'none');
 	}
@@ -992,62 +972,52 @@ function ProcessMod()
 }
 function ShowBox(title, msg, color, redir, noclose)
 {
-	var type = "";
+	const type = '';
 
-	if(color == "red")
-		color = "error";
-	else if(color == "blue")
-		color = "info";
-	else if(color == "green")
-		color = "ok";
+	if(color == 'red')
+		color = 'error';
+	else if(color == 'blue')
+		color = 'info';
+	else if(color == 'green')
+		color = 'ok';
 
-	$('dialog-title').setProperty("class", color);
+	$('dialog-title').setProperty('class', color);
 
-	$('dialog-icon').setProperty("class", 'icon-'+color);
+	$('dialog-icon').setProperty('class', `icon-${color}`);
 
 	$('dialog-title').setHTML(title);
 	$('dialog-content-text').setHTML(msg);
 	FadeElIn('dialog-placement', 750);
 
-	var jsCde = "closeMsg('" + redir + "');";
-	$('dialog-control').setHTML("<input name='dialog-close' onclick=\""+jsCde+"\" class='btn ok' onmouseover=\"ButtonOver('dialog-close')\" onmouseout='ButtonOver(\"dialog-close\")' id=\"dialog-close\" value=\"OK\" type=\"button\">");
+	const jsCde = `closeMsg('${redir}');`;
+	$('dialog-control').setHTML(`<input name='dialog-close' onclick="${jsCde}" class='btn ok' onmouseover="ButtonOver('dialog-close')" onmouseout='ButtonOver("dialog-close")' id="dialog-close" value="OK" type="button">`);
 	$('dialog-control').setStyle('display', 'block');
 
-	if(!noclose)
-	{
-		if(redir)
-			setTimeout("window.location='" + redir + "'",5000);
-		else
-		{
-			setTimeout("FadeElOut('dialog-placement', 750);",5000);
-		}
+	if(!noclose) {
+		if(redir) setTimeout(`window.location='${redir}'`, 5000);
+		else setTimeout("FadeElOut('dialog-placement', 750);", 5000);
 	}
 }
-function closeMsg(redir)
-{
-	if(redir.toString().length > 0 && redir != "undefined")
-		window.location = redir;
-	else
-	{
+function closeMsg(redir) {
+	if(redir.toString().length > 0 && redir != 'undefined') window.location = redir;
+	else {
 		FadeElOut('dialog-placement', 750);
 	}
 }
 
-function TabToReload()
-{
-	var url = window.location.toString();
-	var nurl = url.replace("#^" + url[url.length-1],"");
-	
-	window.setTimeout(function(){
-        window.location.href = nurl;
-    }, 2000);
+function TabToReload() {
+	const url = window.location.toString();
+	const nurl = url.replace(`#^${url[url.length - 1]}`, '');
+
+	window.setTimeout(() => {
+		window.location.href = nurl;
+	}, 2000);
 }
 
-function CheckEmail(type, id)
-{
-	var err = 0;
-	if($('subject').value == "") {
-		$('subject.msg').setHTML("You must type a subject for the email.");
+function CheckEmail(type, id) {
+	let err = 0;
+	if($('subject').value == '') {
+		$('subject.msg').setHTML('You must type a subject for the email.');
 		$('subject.msg').setStyle('display', 'block');
 		err++;
 	} else {
@@ -1055,8 +1025,8 @@ function CheckEmail(type, id)
 		$('subject.msg').setStyle('display', 'none');
 	}
 
-	if($('message').value == "") {
-		$('message.msg').setHTML("You must type a message for the email.");
+	if($('message').value == '') {
+		$('message.msg').setHTML('You must type a message for the email.');
 		$('message.msg').setStyle('display', 'block');
 		err++;
 	} else {
@@ -1064,26 +1034,24 @@ function CheckEmail(type, id)
 		$('message.msg').setStyle('display', 'none');
 	}
 
-	if(err>0)
+	if(err > 0)
 		return;
 	xajax_SendMail($('subject').value, $('message').value, type, id);
 }
 
 function IsNumeric(sText)
 {
-   var ValidChars = "0123456789.";
-   var IsNumber=true;
-   var Char;
+	const ValidChars = '0123456789.';
+	let IsNumber = true;
+	let Char;
 
-	for (i = 0; i < sText.length && IsNumber == true; i++)
-	{
+	for (i = 0; i < sText.length && IsNumber == true; i++) {
 		Char = sText.charAt(i);
-  		if (ValidChars.indexOf(Char) == -1)
-		{
+			if(ValidChars.indexOf(Char) == -1) {
 			IsNumber = false;
-     	}
-  	}
-   	return IsNumber;
+		 	}
+		}
+	return IsNumber;
 }
 
 function ButtonOver(el)
@@ -1105,19 +1073,17 @@ function ButtonOver(el)
 
 function ClearLogs()
 {
-	var noPerm = confirm("Are you sure you want to delete all of the log entries?");
-	if(noPerm == false)
-	{
+	const noPerm = confirm('Are you sure you want to delete all of the log entries?');
+	if(noPerm == false) {
 		return;
 	}
-	window.location = "index.php?p=admin&c=settings&log_clear=true#^2";
+	window.location = 'index.php?p=admin&c=settings&log_clear=true#^2';
 }
 
 function RemoveMod(name, id)
 {
-	var noPerm = confirm("Are you sure you want to delete '" + name +"'?");
-	if(noPerm == false)
-		return;
+	const noPerm = confirm(`Are you sure you want to delete '${name}'?`);
+	if(noPerm == false) return;
 	xajax_RemoveMod(id);
 }
 
@@ -1131,51 +1097,51 @@ function UpdateGroupPermissionCheckBoxes()
 	if(document.getElementById('grouptype').value == 1)
 	{
 		var height = 285;
-	}else if(document.getElementById('grouptype').value == 2)
+	} else if(document.getElementById('grouptype').value == 2)
 	{
 		var height = 435;
-	}else
+	} else
 	{
 		$('type.msg').setStyle('display', 'none');
 		var height = 2;
 	}
 	Shrink('perms', 1000, height);
 	if(document.getElementById('grouptype').value != 3 && document.getElementById('grouptype').value != 0)
-		setTimeout("xajax_UpdateGroupPermissions(document.getElementById('grouptype').value)",1000);
+		setTimeout("xajax_UpdateGroupPermissions(document.getElementById('grouptype').value)", 1000);
 }
 
 function changePage(newPage, type, advSearch, advType)
 {
-	nextPage = newPage.options[newPage.selectedIndex].value
-	if(advSearch!="" && advType !="") {
-		var searchlink = "&advSearch="+advSearch+"&advType="+advType;
+	nextPage = newPage.options[newPage.selectedIndex].value;
+	if(advSearch != '' && advType != '') {
+		var searchlink = `&advSearch=${advSearch}&advType=${advType}`;
 	} else {
-		var searchlink ="";
+		var searchlink = '';
 	}
-	 if (nextPage != 0)
-	 {
-		if(type == "A")
-            window.location = "index.php?p=admin&c=admins"+searchlink+"&page="+nextPage;
-		if(type == "B")
-            window.location = "index.php?p=banlist"+searchlink+"&page="+nextPage;
-		if(type == "C")
-            window.location = "index.php?p=commslist"+searchlink+"&page="+nextPage;
-		if(type == "L")
-            window.location = "index.php?p=admin&c=settings"+searchlink+"&page="+nextPage+"#^2";
-        if(type == "P")
-            window.location = "index.php?p=admin&c=bans&ppage="+nextPage+"#^1";
-        if(type == "PA")
-            window.location = "index.php?p=admin&c=bans&papage="+nextPage+"#^1~p1";
-        if(type == "S")
-            window.location = "index.php?p=admin&c=bans&spage="+nextPage+"#^2";
-        if(type == "SA")
-            window.location = "index.php?p=admin&c=bans&sapage="+nextPage+"#^2~s1";
+	 if(nextPage != 0)
+	{
+		if(type == 'A')
+			window.location = `index.php?p=admin&c=admins${searchlink}&page=${nextPage}`;
+		if(type == 'B')
+			window.location = `index.php?p=banlist${searchlink}&page=${nextPage}`;
+		if(type == 'C')
+			window.location = `index.php?p=commslist${searchlink}&page=${nextPage}`;
+		if(type == 'L')
+			window.location = `index.php?p=admin&c=settings${searchlink}&page=${nextPage}#^2`;
+		if(type == 'P')
+			window.location = `index.php?p=admin&c=bans&ppage=${nextPage}#^1`;
+		if(type == 'PA')
+			window.location = `index.php?p=admin&c=bans&papage=${nextPage}#^1~p1`;
+		if(type == 'S')
+			window.location = `index.php?p=admin&c=bans&spage=${nextPage}#^2`;
+		if(type == 'SA')
+			window.location = `index.php?p=admin&c=bans&sapage=${nextPage}#^2~s1`;
 	 }
 }
 
 function ShowKickBox(check, type)
 {
-	ShowBox('Ban Added', 'The ban has been successfully added<br><iframe id="srvkicker" frameborder="0" width="100%" src="pages/admin.kickit.php?check='+check+'&type='+type+'"></iframe>', 'green', 'index.php?p=admin&c=bans', true);
+	ShowBox('Ban Added', `The ban has been successfully added<br><iframe id="srvkicker" frameborder="0" width="100%" src="pages/admin.kickit.php?check=${check}&type=${type}"></iframe>`, 'green', 'index.php?p=admin&c=bans', true);
 }
 
 function ShowRehashBox(servers, title, msg, color, redir)
@@ -1186,7 +1152,7 @@ function ShowRehashBox(servers, title, msg, color, redir)
 		ShowBox(title, msg, color, redir, true);
 		return;
 	}
-	msg = msg + '<br /><hr /><i>Rehashing Admin and Group data on all related servers...</i><div id="rehashDiv" name="rehashDiv" width="100%"></div>';
+	msg = `${msg}<br /><hr /><i>Rehashing Admin and Group data on all related servers...</i><div id="rehashDiv" name="rehashDiv" width="100%"></div>`;
 	ShowBox(title, msg, color, redir, true);
 	$('dialog-control').setStyle('display', 'none');
 	xajax_RehashAdmins(servers);
@@ -1194,8 +1160,8 @@ function ShowRehashBox(servers, title, msg, color, redir)
 
 function ProcessComment()
 {
-	var err = 0;
-	if($('commenttext').value == "")
+	let err = 0;
+	if($('commenttext').value == '')
 	{
 		$('commenttext.msg').setHTML('You have to type your comment');
 		$('commenttext.msg').setStyle('display', 'block');
@@ -1228,7 +1194,7 @@ function ProcessComment()
 
 function RemoveComment(cid, type, page)
 {
-	var checkUp = confirm("Are you sure you want to delete the comment?");
+	const checkUp = confirm('Are you sure you want to delete the comment?');
 	if(checkUp == false)
 		return;
 	xajax_RemoveComment(cid, type, page);
@@ -1236,85 +1202,83 @@ function RemoveComment(cid, type, page)
 
 function TickSelectAll()
 {
-	for(var i=0;$('chkb_' + i);i++)
+	for (let i = 0; $(`chkb_${i}`); i++)
 	{
-		if($('tickswitch').value==0)
-			$('chkb_' + i).checked = true;
+		if($('tickswitch').value == 0)
+			$(`chkb_${i}`).checked = true;
 		else
-			$('chkb_' + i).checked = false;
+			$(`chkb_${i}`).checked = false;
 	}
-	if($('tickswitch').value==0) {
-		$('tickswitch').value=1;
-		$('tickswitch').setProperty('title','Deselect All');
-		$('tickswitchlink').setProperty('title','Deselect All');
+	if($('tickswitch').value == 0)
+	{
+		$('tickswitch').value = 1;
+		$('tickswitch').setProperty('title', 'Deselect All');
+		$('tickswitchlink').setProperty('title', 'Deselect All');
 		$('tickswitchlink').innerHTML = 'Deselect All';
 	} else {
-		$('tickswitch').value=0;
-		$('tickswitch').setProperty('title','Select All');
-		$('tickswitchlink').setProperty('title','Select All');
+		$('tickswitch').value = 0;
+		$('tickswitch').setProperty('title', 'Select All');
+		$('tickswitchlink').setProperty('title', 'Select All');
 		$('tickswitchlink').innerHTML = 'Select All';
 	}
 }
 
 function BulkEdit(action, bankey)
 {
-	option = action.options[action.selectedIndex].value
+	option = action.options[action.selectedIndex].value;
 	ids = new Array();
-	for(var i=0;$('chkb_' + i);i++)
+	for (let i = 0; $(`chkb_${i}`); i++)
 	{
-		if($('chkb_' + i).checked===true)
-			ids.push($('chkb_' + i).value);
+		if($(`chkb_${i}`).checked === true)
+			ids.push($(`chkb_${i}`).value);
 	}
-	switch(option)
-	{
-		case "U":
-			UnbanBan(ids, bankey, "", "Bulk Unban", "1", "true");
-		break;
-		case "D":
-			RemoveBan(ids, bankey, "", "Bulk Delete", "0", "true");
-		break;
+	switch (option) {
+		case 'U':
+			UnbanBan(ids, bankey, '', 'Bulk Unban', '1', 'true');
+			break;
+		case 'D':
+			RemoveBan(ids, bankey, '', 'Bulk Delete', '0', 'true');
+			break;
 	}
 }
 
 function BanFriendsProcess(fid, name)
 {
-	var checkUp = confirm("Are you sure you want to ban all steam community friends of '"+name+"'?");
+	const checkUp = confirm(`Are you sure you want to ban all steam community friends of '${name}'?`);
 	if(checkUp == false)
 		return;
-	ShowBox("Banning friends of "+name, "Banning all steam community friends of '"+name+"'.<br />Please wait...<br />This can last very long, depending on the amount of friends.", 'blue', '', true);
+	ShowBox(`Banning friends of ${name}`, `Banning all steam community friends of '${name}'.<br />Please wait...<br />This can last very long, depending on the amount of friends.`, 'blue', '', true);
 	$('dialog-control').setStyle('display', 'none');
 	xajax_BanFriends(fid, name);
 }
 
-function OpenMessageBox(sid, name, popup)
-{
-	if(popup==1) {
-		ShowBox('Send Message', '<b>Please type the message you want to send to <br>\''+name+'\'.</b><br>You need to have basechat.smx enabled as we use<br><i>&lt;sm_psay&gt;</i>.<br><textarea rows="3" cols="40" name="ingamemsg" id="ingamemsg" style="overflow:auto;"></textarea><br><div id="ingamemsg.msg" class="badentry"></div>', 'blue', '', true);
+function OpenMessageBox(sid, name, popup) {
+	if(popup == 1) {
+		ShowBox('Send Message', `<b>Please type the message you want to send to <br>'${name}'.</b><br>You need to have basechat.smx enabled as we use<br><i>&lt;sm_psay&gt;</i>.<br><textarea rows="3" cols="40" name="ingamemsg" id="ingamemsg" style="overflow:auto;"></textarea><br><div id="ingamemsg.msg" class="badentry"></div>`, 'blue', '', true);
 		$('dialog-control').setHTML('<input type="button" name="ingmsg" class="btn ok" onmouseover="ButtonOver(\'ingmsg\')" onmouseout="ButtonOver(\'ingmsg\')" id="ingmsg" value="Send Message" />&nbsp;<input type="button" onclick="closeMsg(\'\');" name="astop" class="btn cancel" onmouseover="ButtonOver(\'astop\')" onmouseout="ButtonOver(\'astop\')" id="astop" value="Cancel" />');
-		$('ingmsg').addEvent('click', function(){OpenMessageBox(sid, name, 0);});
-	} else if(popup==0) {
+		$('ingmsg').addEvent('click', () => { OpenMessageBox(sid, name, 0); });
+	} else if(popup == 0) {
 		message = $('ingamemsg').value;
-		if(message == "") {
-			$('ingamemsg.msg').setHTML("Please type your message.");
+		if(message == '') {
+			$('ingamemsg.msg').setHTML('Please type your message.');
 			$('ingamemsg.msg').setStyle('display', 'block');
 			return;
-		} else {
-			$('ingamemsg.msg').setHTML('');
-			$('ingamemsg.msg').setStyle('display', 'none');
 		}
+		$('ingamemsg.msg').setHTML('');
+		$('ingamemsg.msg').setStyle('display', 'none');
+
 		$('dialog-control').setStyle('display', 'none');
 		$('ingamemsg').readOnly = true;
 		xajax_SendMessage(sid, name, message);
 	}
 }
 
-function KickPlayerConfirm(sid, name, conf)
-{
-	if(conf==0)	{
-		ShowBox('Kick Player', '<b>Are you sure you want to kick player  <br>\''+name+'\'?</b>', 'blue', '', true);
+function KickPlayerConfirm(sid, name, conf) {
+	if(conf == 0)	{
+		ShowBox('Kick Player', `<b>Are you sure you want to kick player  <br>'${name}'?</b>`, 'blue', '', true);
 		$('dialog-control').setHTML('<input type="button" name="kbutton" class="btn ok" onmouseover="ButtonOver(\'kbutton\')" onmouseout="ButtonOver(\'kbutton\')" id="kbutton" value="Yes" />&nbsp;<input type="button" onclick="closeMsg(\'\');" name="astop" class="btn cancel" onmouseover="ButtonOver(\'astop\')" onmouseout="ButtonOver(\'astop\')" id="astop" value="No" />');
-		$('kbutton').addEvent('click', function(){KickPlayerConfirm(sid, name, 1);});
-	} else if(conf==1) {
+		$('kbutton').addEvent('click', () => { KickPlayerConfirm(sid, name, 1); });
+	} else if(conf == 1) {
 		$('dialog-control').setStyle('display', 'none');
 		xajax_KickPlayer(sid, name);
 	}
@@ -1322,27 +1286,27 @@ function KickPlayerConfirm(sid, name, conf)
 
 function mapimg(filename)
 {
-	$('mapimg.msg').setHTML("Uploaded: <b>" + filename + "</b>");
+	$('mapimg.msg').setHTML(`Uploaded: <b>${filename}</b>`);
 }
 
 function selectLengthTypeReason(length, type, reason)
 {
-	for(var i=0; i<=$('banlength').length ; i++) {
+	for (var i = 0; i <= $('banlength').length; i++) {
 		if($('banlength').options[i].value == (length / 60)) {
-			$('banlength').options[i].selected=true;
+			$('banlength').options[i].selected = true;
 			break;
 		}
 	}
 	$('type').options[type].selected = true;
-	for(var i=0;i<=$('listReason').length;i++)	{
+	for (var i = 0; i <= $('listReason').length; i++)	{
 		if($('listReason').options[i].innerHTML == reason) {
-			$('listReason').options[i].selected=true;
+			$('listReason').options[i].selected = true;
 			break;
 		}
 		if($('listReason').options[i].value == 'other') {
 			$('txtReason').value = reason;
 			$('dreason').style.display = 'block';
-			$('listReason').options[i].selected=true;
+			$('listReason').options[i].selected = true;
 			break;
 		}
 	}
@@ -1350,164 +1314,164 @@ function selectLengthTypeReason(length, type, reason)
 
 function ViewCommunityProfile(sid, name)
 {
-    ShowBox('View Community Profile', 'Generating Community Profile link for "'+name+'", please wait...', 'blue', '', true);
-    $('dialog-control').setStyle('display', 'none');
-    xajax_ViewCommunityProfile(sid, name);
+	ShowBox('View Community Profile', `Generating Community Profile link for "${name}", please wait...`, 'blue', '', true);
+	$('dialog-control').setStyle('display', 'none');
+	xajax_ViewCommunityProfile(sid, name);
 }
 
 // Thanks to http://phpjs.org/functions/addslashes:303
-function addslashes (str)
+function addslashes(str)
 {
-	return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+	return (`${str}`).replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
 }
 
 function RemoveBlock(id, key, page, name, confirm)
 {
-	if(confirm==0) {
-		ShowBox('Delete Block', 'Are you sure you want to delete the block for '+ name + '?', 'blue', '', true);
-		$('dialog-control').setHTML('<input type="button" onclick="RemoveBlock(\''+id+'\', \''+key+'\', \''+page+'\', \''+addslashes(name.replace(/\'/g,'\\\''))+'\', \'1\''+');" name="rban" class="btn ok" onmouseover="ButtonOver(\'rban\')" onmouseout="ButtonOver(\'rban\')" id="rban" value="Remove Block" />&nbsp;<input type="button" onclick="closeMsg(\'\');$(\'bulk_action\').options[0].selected=true;" name="astop" class="btn cancel" onmouseover="ButtonOver(\'astop\')" onmouseout="ButtonOver(\'astop\')" id="astop" value="Cancel" />');
-	} else if(confirm==1) {
-		if(page != "")
+	if(confirm == 0) {
+		ShowBox('Delete Block', `Are you sure you want to delete the block for ${name}?`, 'blue', '', true);
+		$('dialog-control').setHTML(`<input type="button" onclick="RemoveBlock('${id}', '${key}', '${page}', '${addslashes(name.replace(/\'/g, '\\\''))}', '1'` + ');" name="rban" class="btn ok" onmouseover="ButtonOver(\'rban\')" onmouseout="ButtonOver(\'rban\')" id="rban" value="Remove Block" />&nbsp;<input type="button" onclick="closeMsg(\'\');$(\'bulk_action\').options[0].selected=true;" name="astop" class="btn cancel" onmouseover="ButtonOver(\'astop\')" onmouseout="ButtonOver(\'astop\')" id="astop" value="Cancel" />');
+	} else if(confirm == 1) {
+		if(page != '')
 			var pagelink = page;
 		else
-			var pagelink = "";
-		window.location = "index.php?p=commslist" + pagelink + "&a=delete&id="+ id +"&key="+ key;
+			var pagelink = '';
+		window.location = `index.php?p=commslist${pagelink}&a=delete&id=${id}&key=${key}`;
 	}
 }
 
 function UnGag(id, key, page, name, popup)
 {
-	if(popup==1) {
-		ShowBox('UnGag Reason', '<b>Please give a short comment, why you are going to ungag '+"\'"+ name +"\'"+'!</b><br><textarea rows="3" cols="40" name="ureason" id="ureason" style="overflow:auto;"></textarea><br><div id="ureason.msg" class="badentry"></div>', 'blue', '', true);
-		$('dialog-control').setHTML('<input type="button" onclick="UnGag(\''+id+'\', \''+key+'\', \''+page+'\', \''+addslashes(name.replace(/\'/g,'\\\''))+'\', \'0\''+');" name="uban" class="btn ok" onmouseover="ButtonOver(\'uban\')" onmouseout="ButtonOver(\'uban\')" id="uban" value="UnGag Player" />&nbsp;<input type="button" onclick="closeMsg(\'\');" name="astop" class="btn cancel" onmouseover="ButtonOver(\'astop\')" onmouseout="ButtonOver(\'astop\')" id="astop" value="Cancel" />');
-	} else if(popup==0) {
-		if(page != "")
+	if(popup == 1) {
+		ShowBox('UnGag Reason', `${'<b>Please give a short comment, why you are going to ungag ' + "\'"}${name}\'` + '!</b><br><textarea rows="3" cols="40" name="ureason" id="ureason" style="overflow:auto;"></textarea><br><div id="ureason.msg" class="badentry"></div>', 'blue', '', true);
+		$('dialog-control').setHTML(`<input type="button" onclick="UnGag('${id}', '${key}', '${page}', '${addslashes(name.replace(/\'/g, '\\\''))}', '0'` + ');" name="uban" class="btn ok" onmouseover="ButtonOver(\'uban\')" onmouseout="ButtonOver(\'uban\')" id="uban" value="UnGag Player" />&nbsp;<input type="button" onclick="closeMsg(\'\');" name="astop" class="btn cancel" onmouseover="ButtonOver(\'astop\')" onmouseout="ButtonOver(\'astop\')" id="astop" value="Cancel" />');
+	} else if(popup == 0) {
+		if(page != '')
 			var pagelink = page;
 		else
-			var pagelink = "";
+			var pagelink = '';
 		reason = $('ureason').value;
-		if(reason == "") {
-			$('ureason.msg').setHTML("Please leave a comment.");
+		if(reason == '') {
+			$('ureason.msg').setHTML('Please leave a comment.');
 			$('ureason.msg').setStyle('display', 'block');
 			return;
-		} else {
-			$('ureason.msg').setHTML('');
-			$('ureason.msg').setStyle('display', 'none');
 		}
-		window.location = "index.php?p=commslist" + pagelink + "&a=ungag&id="+ id +"&key="+ key +"&ureason="+ reason;
+		$('ureason.msg').setHTML('');
+		$('ureason.msg').setStyle('display', 'none');
+
+		window.location = `index.php?p=commslist${pagelink}&a=ungag&id=${id}&key=${key}&ureason=${reason}`;
 	}
 }
 
 function UnMute(id, key, page, name, popup)
 {
-	if(popup==1) {
-		ShowBox('UnMute Reason', '<b>Please give a short comment, why you are going to unmute '+"\'"+ name +"\'"+'!</b><br><textarea rows="3" cols="40" name="ureason" id="ureason" style="overflow:auto;"></textarea><br><div id="ureason.msg" class="badentry"></div>', 'blue', '', true);
-		$('dialog-control').setHTML('<input type="button" onclick="UnMute(\''+id+'\', \''+key+'\', \''+page+'\', \''+addslashes(name.replace(/\'/g,'\\\''))+'\', \'0\''+');" name="uban" class="btn ok" onmouseover="ButtonOver(\'uban\')" onmouseout="ButtonOver(\'uban\')" id="uban" value="UnMute Player" />&nbsp;<input type="button" onclick="closeMsg(\'\');" name="astop" class="btn cancel" onmouseover="ButtonOver(\'astop\')" onmouseout="ButtonOver(\'astop\')" id="astop" value="Cancel" />');
-	} else if(popup==0) {
-		if(page != "")
+	if(popup == 1) {
+		ShowBox('UnMute Reason', `${'<b>Please give a short comment, why you are going to unmute ' + "\'"}${name}\'` + '!</b><br><textarea rows="3" cols="40" name="ureason" id="ureason" style="overflow:auto;"></textarea><br><div id="ureason.msg" class="badentry"></div>', 'blue', '', true);
+		$('dialog-control').setHTML(`<input type="button" onclick="UnMute('${id}', '${key}', '${page}', '${addslashes(name.replace(/\'/g, '\\\''))}', '0'` + ');" name="uban" class="btn ok" onmouseover="ButtonOver(\'uban\')" onmouseout="ButtonOver(\'uban\')" id="uban" value="UnMute Player" />&nbsp;<input type="button" onclick="closeMsg(\'\');" name="astop" class="btn cancel" onmouseover="ButtonOver(\'astop\')" onmouseout="ButtonOver(\'astop\')" id="astop" value="Cancel" />');
+	} else if(popup == 0) {
+		if(page != '')
 			var pagelink = page;
 		else
-			var pagelink = "";
+			var pagelink = '';
 		reason = $('ureason').value;
-		if(reason == "") {
-			$('ureason.msg').setHTML("Please leave a comment.");
+		if(reason == '') {
+			$('ureason.msg').setHTML('Please leave a comment.');
 			$('ureason.msg').setStyle('display', 'block');
 			return;
-		} else {
-			$('ureason.msg').setHTML('');
-			$('ureason.msg').setStyle('display', 'none');
 		}
-		window.location = "index.php?p=commslist" + pagelink + "&a=unmute&id="+ id +"&key="+ key +"&ureason="+ reason;
+		$('ureason.msg').setHTML('');
+		$('ureason.msg').setStyle('display', 'none');
+
+		window.location = `index.php?p=commslist${pagelink}&a=unmute&id=${id}&key=${key}&ureason=${reason}`;
 	}
 }
 
 function search_blocks()
 {
-	var type = "";
-	var input = "";
+	let type = '';
+	let input = '';
 	if($('name').checked)
 	{
-		type = "name";
+		type = 'name';
 		input = $('nick').value;
 	}
 	if($('steam_').checked)
 	{
-		type = (document.getElementById('steam_match').value == "1" ? "steam" : "steamid");
+		type = (document.getElementById('steam_match').value == '1' ? 'steam' : 'steamid');
 		input = $('steamid').value;
 	}
 	if($('reason_').checked)
 	{
-		type = "reason";
+		type = 'reason';
 		input = $('ban_reason').value;
 	}
 	if($('date').checked)
 	{
-		type = "date";
-		input = $('day').value + "," + $('month').value + "," + $('year').value;
+		type = 'date';
+		input = `${$('day').value},${$('month').value},${$('year').value}`;
 	}
 	if($('length_').checked)
 	{
-		type = "length";
-		if($('length').value=="other")
+		type = 'length';
+		if($('length').value == 'other')
 			var length = $('other_length').value;
 		else
-			var length = $('length').value
-		input = $('length_type').value + "," + length;
+			var length = $('length').value;
+		input = `${$('length_type').value},${length}`;
 	}
 	if($('ban_type_').checked)
 	{
-		type = "btype";
+		type = 'btype';
 		input = $('ban_type').value;
 	}
 	if($('bancount').checked)
 	{
-		type = "bancount";
+		type = 'bancount';
 		input = $('timesbanned').value;
 	}
 	if($('admin').checked)
 	{
-		type = "admin";
+		type = 'admin';
 		input = $('ban_admin').value;
 	}
 	if($('where_banned').checked)
 	{
-		type = "where_banned";
+		type = 'where_banned';
 		input = $('server').value;
 	}
 	if($('comment_').checked)
 	{
-		type = "comment";
+		type = 'comment';
 		input = $('ban_comment').value;
 	}
-	if(type!="" && input!="")
-		window.location = "index.php?p=commslist&advSearch=" + input + "&advType=" + type;
+	if(type != '' && input != '')
+		window.location = `index.php?p=commslist&advSearch=${input}&advType=${type}`;
 }
 
 function ShowBlockBox(check, type, length)
 {
-	ShowBox('Block Added', 'The block has been successfully added<br><iframe id="srvkicker" frameborder="0" width="100%" src="pages/admin.blockit.php?check='+check+'&type='+type+'&length='+length+'"></iframe>', 'green', 'index.php?p=admin&c=comms', true);
+	ShowBox('Block Added', `The block has been successfully added<br><iframe id="srvkicker" frameborder="0" width="100%" src="pages/admin.blockit.php?check=${check}&type=${type}&length=${length}"></iframe>`, 'green', 'index.php?p=admin&c=comms', true);
 }
 
 function openTab(event, target) {
-    var menu = document.getElementById("admin-page-menu");
-    for (var i = 0; i < menu.children.length - 1; i++) {
-        menu.children[i].classList.remove("active");
-    }
+	const menu = document.getElementById('admin-page-menu');
+	for (var i = 0; i < menu.children.length - 1; i++) {
+		menu.children[i].classList.remove('active');
+	}
 
-    event.classList.add("active");
+	event.classList.add('active');
 
-    var content = document.getElementsByClassName("tabcontent");
-    for (var i = 0; i < content.length; i++) {
-        if (content[i].id === target) {
-            content[i].style.display = "block";
-        } else {
-            content[i].style.display = "none";
-        }
-    }
+	const content = document.getElementsByClassName('tabcontent');
+	for (var i = 0; i < content.length; i++) {
+		if(content[i].id === target) {
+			content[i].style.display = 'block';
+		} else {
+			content[i].style.display = 'none';
+		}
+	}
 }
 
 function swapTab(tab) {
-	let menu = document.getElementById("admin-page-menu").children;
-	if (Number.isInteger(tab) && tab <= menu.length)
-		menu[tab].click()
+	const menu = document.getElementById('admin-page-menu').children;
+	if(Number.isInteger(tab) && tab <= menu.length)
+		menu[tab].click();
 }
