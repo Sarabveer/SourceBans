@@ -55,7 +55,7 @@ define('IN_SB', true);
 // ---------------------------------------------------
 #DB Config
 if (!file_exists(ROOT.'/config.php')) {
-    die('SourceBans++ is not installed.');
+    die('SourceBans++ is not installed.  Click <a href="/install">here</a> to install.');
 }
 require_once(ROOT.'/config.php');
 
