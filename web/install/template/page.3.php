@@ -32,9 +32,9 @@ if (isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port
    <tr>
   <td width="33%" height="16" class="listtable_1"><b>PHP Version</b></td>
   <td width="22%" height="16" class="listtable_top">N/A</td>
-    <td width="22%" height="16" class="listtable_1"><b>7.4</b></td>
+    <td width="22%" height="16" class="listtable_1"><b>>= 8.1</b></td>
     <?php
-    if (version_compare(PHP_VERSION, "7.4") != -1) {
+    if (version_compare(PHP_VERSION, "8.1") != -1) {
         $class = "green";
     } else {
         $class = "red";
@@ -137,7 +137,7 @@ if (isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port
    <tr>
   <td width="33%" height="16" class="listtable_1"><b>Database Version</b></td>
 	<td width="22%" height="16" class="listtable_top">N/A</td>
-	<td width="22%" height="16" class="listtable_1"><b>Mysql 5.5 or MariaDB 10.0.5</b></td>
+	<td width="22%" height="16" class="listtable_1"><b>Mysql >= 5.6 or MariaDB >= 10.0.5</b></td>
 	<?php
         //our SQL is using FULLTEXT in inno DB.
         //this is only supported from Mysql 5.5 onwards
@@ -145,6 +145,7 @@ if (isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port
 	if (strpos($sql_version, 'MARIADB') !== false){
            	 //we have a mariadb.
 		//check for versions below 10.0.5
+		$sql_database_type = 'MARIADB';
 		if(version_compare($sql_version, "10.0.5", "<")){
 			$class = "red";
 			$errors++;
@@ -154,15 +155,16 @@ if (isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port
         }else{
             //other DB (presumably mysql)
             //check for stuff lower then 5.5
-            if(version_compare($sql_version, "5.5", "<")) {
+          	$sql_database_type = 'Mysql';
+		if(version_compare($sql_version, "5.6", "<")) {
 				$class = "red";
 				$errors++;
-            }else{
+            	}else{
 				$class = "green";
             }
 	}
 	?>
-	<td width="22%" height="16" class="<?php echo $class?>"><?php echo $sql_version;?></td>
+	<td width="22%" height="16" class="<?php echo $class?>"><?php echo $sql_database_type . ' ' . $sql_version;?></td>
   </tr>
 </table>
 </div>
@@ -191,7 +193,7 @@ if (isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port
   </tr>
 
    <tr>
-  <td width="33%" height="16" class="listtable_1"><b>Cache Writable (/cache)</b></td>
+  <td width="33%" height="16" class="listtable_1"><b>Cache Folder Writable (/cache)</b></td>
 	<td width="22%" height="16" class="listtable_top">N/A</td>
 	<td width="22%" height="16" class="listtable_1"><b>Yes</b></td>
 	<?php if(is_writable("../cache"))
