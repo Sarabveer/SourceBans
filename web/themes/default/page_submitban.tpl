@@ -72,7 +72,8 @@
 		Upload demo:	</td>
 	<td>
 		<input name="demo_file" type="file" size="25" class="file" style="width: 268px;" /><br />
-		Note: Only DEM, <a href="http://www.winzip.com" target="_blank">ZIP</a>, <a href="http://www.rarlab.com" target="_blank">RAR</a>, <a href="http://www.7-zip.org" target="_blank">7Z</a>, <a href="http://www.bzip.org" target="_blank">BZ2</a> or <a href="http://www.gzip.org" target="_blank">GZ</a> allowed.	</td>
+		Note: Only DEM, <a href="http://www.winzip.com" target="_blank">ZIP</a>, <a href="http://www.rarlab.com" target="_blank">RAR</a>, <a href="http://www.7-zip.org" target="_blank">7Z</a>, <a href="http://www.bzip.org" target="_blank">BZ2</a> or <a href="http://www.gzip.org" target="_blank">GZ</a> allowed.<br />
+		Max file size: {$max_file_size}	</td>
     </tr>
 <tr>
 	<td width="20%"><span class="mandatory">*</span> = Mandatory Field</td>
