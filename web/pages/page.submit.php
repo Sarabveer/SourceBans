@@ -221,5 +221,6 @@ $theme->assign('subplayer_name', $SubmitterName);
 $theme->assign('player_email', $Email);
 $theme->assign('server_list', $servers);
 $theme->assign('server_selected', $SID);
+$theme->assign('max_file_size', ini_get('upload_max_filesize'));
 
 $theme->display('page_submitban.tpl');
