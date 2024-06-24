@@ -50,7 +50,7 @@ if (isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port
 	<?php $uploads = ini_get("file_uploads");if($uploads)
 		$class = "green";
 	  else {  $class = "red"; $errors++;}?>
-	<td width="22%" height="16" class="<?php echo $class?>"><?php echo $uploads?'On':'Off';?></td>
+	<td width="22%" height="16" class="<?php echo $class?>"><?php echo $uploads?'On':'Off'; echo ' (Max: ' . ini_get('upload_max_filesize') . ')';?></td>
   </tr>
 
   <td width="33%" height="16" class="listtable_1"><b>OpenSSL Support</b></td>
