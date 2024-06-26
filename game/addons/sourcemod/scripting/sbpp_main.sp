@@ -35,7 +35,7 @@
 
 #pragma newdecls required
 
-#define SB_VERSION "1.8.1"
+#define SB_VERSION "1.8.2"
 
 #if defined _updater_included
 #define UPDATE_URL "https://sbpp.github.io/updater/updatefile.txt"
@@ -417,7 +417,7 @@ public void Event_OnPlayerName(Handle event, const char[] name, bool dontBroadca
 public Action ChatHook(int client, int args)
 {
 	// is this player preparing to ban someone
-	if (g_ownReasons[client])
+	if (g_ownReasons[client] && !IsChatTrigger())
 	{
 		// get the reason
 		char reason[512];
