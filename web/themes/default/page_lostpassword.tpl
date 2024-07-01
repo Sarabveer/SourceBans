@@ -1,17 +1,11 @@
 <div id="lostpassword">
     <div id="login-content">
 
-        <div id="msg-red" style="display:none;">
-            <i class="fas fa-times fa-2x"></i>
-            <b>Error</b>
-            <br />
-            The email address you supplied is not registered on the system.</i>
-        </div>
-        <div id="msg-blue" style="display:none;">
+        <div id="msg-blue msg-red" style="display:none;">
             <i><img src="./images/info.png" alt="Warning" /></i>
             <b>Information</b>
             <br />
-            Please check your email inbox (and spam) for a link which will help you reset your password.</i>
+            If your email is registered, you will receive a password reset link shortly. Please check your email inbox (and spam).
         </div>
 
         <h4>
@@ -20,7 +14,7 @@
 
         <div id="loginPasswordDiv">
             <label for="email">Your E-Mail Address:</label><br />
-            <input id="email" class="loginmedium" type="text" name="password" value="" />
+            <input id="email" class="loginmedium" type="text" name="email" value="" />
         </div>
 
         <div id="loginSubmit">

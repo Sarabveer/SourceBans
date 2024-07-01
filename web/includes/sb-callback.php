@@ -137,7 +137,7 @@ function LostPassword(string $email)
 
     if (empty($result['aid'])) {
         $objResponse->addScript(
-            "ShowBox('Error', 'The email address you supplied is not registered on the system', 'red', '');"
+            "ShowBox('Check E-Mail', 'If your email is registered, you will receive a password reset link shortly. Please check your email inbox (and spam).', 'blue', '');"
         );
         return $objResponse;
     }
@@ -158,7 +158,7 @@ function LostPassword(string $email)
 
     if ($isEmailSent) {
         $objResponse->addScript(
-            "ShowBox('Check E-Mail', 'Please check your email inbox (and spam) for a link which will help you reset your password.', 'blue', '');"
+            "ShowBox('Check E-Mail', 'If your email is registered, you will receive a password reset link shortly. Please check your email inbox (and spam).', 'blue', '');"
         );
     } else {
       $objResponse->addScript("ShowBox('Error', 'Error sending email.', 'red', '')");
