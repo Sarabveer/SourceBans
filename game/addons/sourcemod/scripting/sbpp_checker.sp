@@ -29,12 +29,13 @@
 
 #include <sourcemod>
 
-#define VERSION "1.8.1"
+#define VERSION "1.8.2"
 #define LISTBANS_USAGE "sm_listbans <#userid|name> - Lists a user's prior bans from Sourcebans"
 #define LISTCOMMS_USAGE "sm_listcomms <#userid|name> - Lists a user's prior comms from Sourcebans"
 #define INVALID_TARGET -1
 #define Prefix "\x04[SourceBans++]\x01 "
 
+bool g_bPrintCheckOnConnect = true;
 char g_DatabasePrefix[10] = "sb";
 SMCParser g_ConfigParser;
 Database g_DB;
@@ -143,6 +144,9 @@ public void OnConnectBanCheck(Database db, DBResultSet results, const char[] err
 
 	g_iBanCounts[client] = bancount;
 	g_iCommsCounts[client] = commcount;
+
+	if (!g_bPrintCheckOnConnect)
+		return;
 
 	if ( bancount && commcount ) {
 		PrintToBanAdmins("%s%t", Prefix, "Ban and Comm Warning", client, bancount, ((bancount > 1 || bancount == 0) ? "s":""), commcount, ((commcount > 1 || commcount == 0) ? "s":""));
@@ -583,6 +587,14 @@ public SMCResult ReadConfig_KeyValue(SMCParser smc, const char[] key, const char
 		if (g_DatabasePrefix[0] == '\0')
 		{
 			g_DatabasePrefix = "sb";
+		}
+	}
+
+	if (strcmp("PrintCheckOnConnect", key, false) == 0)
+	{
+		if (strcmp("0", value, false) == 0)
+		{
+			g_bPrintCheckOnConnect = false;
 		}
 	}
 
