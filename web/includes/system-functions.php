@@ -405,3 +405,23 @@ function compareSanitizedString(string $str1, string $str2)
 {
     return (bool)(strcmp(filter_var($str1, FILTER_SANITIZE_SPECIAL_CHARS), filter_var($str2, FILTER_SANITIZE_SPECIAL_CHARS)) === 0);
 }
+
+/**
+ * @param  string $text
+ * @return string
+ */
+function encodePreservingBr($text) {
+    // Split the text at <br> tags, preserving the tags in the result
+    $parts = preg_split('/(<br\s*\/?>)/i', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+    $result = '';
+    
+    foreach ($parts as $part) {
+        if (preg_match('/^<br\s*\/?>$/i', $part)) {
+            $result .= "\n"; // Replace <br /> with newline
+        } else {
+            $result .= htmlspecialchars($part, ENT_QUOTES, 'UTF-8'); // Encode the rest
+        }
+    }
+    
+    return nl2br($result);  // Convert newlines back to <br /> for HTML
+}

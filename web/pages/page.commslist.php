@@ -607,10 +607,11 @@ while (!$res->EOF) {
 
                 $cdata['comname']    = $commentres->fields['comname'];
                 $cdata['added']      = Config::time($commentres->fields['added']);
-                $cdata['commenttxt'] = $commentres->fields['commenttxt'];
-                $cdata['commenttxt'] = str_replace("\n", "<br />", $cdata['commenttxt']);
+                $commentText         = html_entity_decode($commentres->fields['commenttxt'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $commentText         = encodePreservingBr($commentText);
                 // Parse links and wrap them in a <a href=""></a> tag to be easily clickable
-                $cdata['commenttxt'] = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="$1" target="_blank">$1</a>', $cdata['commenttxt']);
+                $commentText         = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="\$1" target="_blank">\$1</a>', $commentText);
+                $cdata['commenttxt'] = $commentText;
 
                 if (!empty($commentres->fields['edittime'])) {
                     $cdata['edittime'] = Config::time($commentres->fields['edittime']);
@@ -700,7 +701,8 @@ if (isset($_GET["comment"])) {
     $theme->assign('commenttype', (isset($_GET["cid"]) ? "Edit" : "Add"));
     if (isset($_GET["cid"])) {
         $ceditdata      = $GLOBALS['db']->GetRow("SELECT * FROM " . DB_PREFIX . "_comments WHERE cid = '" . (int) $_GET["cid"] . "'");
-        $ctext          = $ceditdata['commenttxt'];
+        $ctext          = html_entity_decode($ceditdata['commenttxt'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $ctext          = htmlspecialchars($ctext, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $cotherdataedit = " AND cid != '" . (int) $_GET["cid"] . "'";
     } else {
         $cotherdataedit = "";
@@ -720,9 +722,10 @@ if (isset($_GET["comment"])) {
         $coment               = [];
         $coment['comname']    = $cotherdata->fields['comname'];
         $coment['added']      = Config::time($cotherdata->fields['added']);
-        $coment['commenttxt'] = str_replace("\n", "<br />", $cotherdata->fields['commenttxt']);
-        // Parse links and wrap them in a <a href=""></a> tag to be easily clickable
-        $coment['commenttxt'] = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="$1" target="_blank">$1</a>', $coment['commenttxt']);
+        $commentText          = html_entity_decode($cotherdata->fields['commenttxt'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $commentText          = encodePreservingBr($commentText);
+        $commentText          = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="\$1" target="_blank">\$1</a>', $commentText);
+        $coment['commenttxt'] = $commentText;
         if ($cotherdata->fields['editname'] != "") {
             $coment['edittime'] = Config::time($cotherdata->fields['edittime']);
             $coment['editname'] = $cotherdata->fields['editname'];

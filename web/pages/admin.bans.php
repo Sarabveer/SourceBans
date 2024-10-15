@@ -239,8 +239,10 @@ foreach ($protests as $prot) {
 
             $cdata['comname']    = $commentres->fields['comname'];
             $cdata['added']      = Config::time($commentres->fields['added']);
-            $cdata['commenttxt'] = htmlspecialchars($commentres->fields['commenttxt']);
-            $cdata['commenttxt'] = str_replace("\n", "<br />", $cdata['commenttxt']);
+            $commentText         = html_entity_decode($commentres->fields['commenttxt'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            $commentText         = encodePreservingBr($commentText);
+            $commentText         = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="\$1" target="_blank">\$1</a>', $commentText);
+            $cdata['commenttxt'] = $commentText;
 
             if (!empty($commentres->fields['edittime'])) {
                 $cdata['edittime'] = Config::time($commentres->fields['edittime']);
@@ -400,8 +402,10 @@ foreach ($protestsarchiv as $prot) {
 
             $cdata['comname']    = $commentres->fields['comname'];
             $cdata['added']      = Config::time($commentres->fields['added']);
-            $cdata['commenttxt'] = htmlspecialchars($commentres->fields['commenttxt']);
-            $cdata['commenttxt'] = str_replace("\n", "<br />", $cdata['commenttxt']);
+            $commentText         = html_entity_decode($commentres->fields['commenttxt'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            $commentText         = encodePreservingBr($commentText);
+            $commentText         = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="\$1" target="_blank">\$1</a>', $commentText);
+            $cdata['commenttxt'] = $commentText;
 
             if (!empty($commentres->fields['edittime'])) {
                 $cdata['edittime'] = Config::time($commentres->fields['edittime']);
@@ -554,8 +558,11 @@ foreach ($submissions as $sub) {
 
             $cdata['comname']    = $commentres->fields['comname'];
             $cdata['added']      = Config::time($commentres->fields['added']);
-            $cdata['commenttxt'] = htmlspecialchars($commentres->fields['commenttxt']);
-            $cdata['commenttxt'] = str_replace("\n", "<br />", $cdata['commenttxt']);
+            $commentText         = html_entity_decode($commentres->fields['commenttxt'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            $commentText         = encodePreservingBr($commentText);
+            // Parse links and wrap them in a <a href=""></a> tag to be easily clickable
+            $commentText         = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="\$1" target="_blank">\$1</a>', $commentText);
+            $cdata['commenttxt'] = $commentText;
 
             if (!empty($commentres->fields['edittime'])) {
                 $cdata['edittime'] = Config::time($commentres->fields['edittime']);
@@ -694,8 +701,11 @@ foreach ($submissionsarchiv as $sub) {
 
             $cdata['comname']    = $commentres->fields['comname'];
             $cdata['added']      = Config::time($commentres->fields['added']);
-            $cdata['commenttxt'] = htmlspecialchars($commentres->fields['commenttxt']);
-            $cdata['commenttxt'] = str_replace("\n", "<br />", $cdata['commenttxt']);
+            $commentText         = html_entity_decode($commentres->fields['commenttxt'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            $commentText         = encodePreservingBr($commentText);
+            // Parse links and wrap them in a <a href=""></a> tag to be easily clickable
+            $commentText         = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@', '<a href="\$1" target="_blank">\$1</a>', $commentText);
+            $cdata['commenttxt'] = $commentText;
 
             if (!empty($commentres->fields['edittime'])) {
                 $cdata['edittime'] = Config::time($commentres->fields['edittime']);
