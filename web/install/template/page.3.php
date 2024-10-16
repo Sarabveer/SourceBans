@@ -15,7 +15,7 @@ if (isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port
 }
 ?>
 
-<b><p>This page will list all of the requirements to run the SourceBans web interface, and compare them with your current values. This page will also list some recomendations. These aren't required to run SourceBans web interface, but they are highly recomended.</p></b>
+<b><p>This page will list all of the requirements to run the SourceBans web interface, and compare them with your current values. This page will also list some recomendations. These aren't required to run SourceBans web interface, but they are highly recommended.</p></b>
 <table style="width: 101%; margin: 0 0 -2px -2px;">
     <tr>
         <td colspan="3" class="listtable_top"><b>PHP Requirements</b></td>
@@ -25,7 +25,7 @@ if (isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port
 <table width="98%" cellspacing="0" cellpadding="0" align="center" class="listtable" style="margin-top:3px;">
   <tr>
   <td width="33%" height="16" class="listtable_top">Setting</td>
-	<td width="22%" height="16" class="listtable_top">Recomended</td>
+	<td width="22%" height="16" class="listtable_top">Recommended</td>
 	<td width="22%" height="16" class="listtable_top">Required</td>
 	 <td width="22%" height="16" class="listtable_top">Your Value</td>
   </tr>
@@ -130,7 +130,7 @@ if (isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port
 <table width="98%" cellspacing="0" cellpadding="0" align="center" class="listtable" style="margin-top:3px;">
   <tr>
   <td width="33%" height="16" class="listtable_top">Setting</td>
-	<td width="22%" height="16" class="listtable_top">Recomended</td>
+	<td width="22%" height="16" class="listtable_top">Recommended</td>
 	<td width="22%" height="16" class="listtable_top">Required</td>
 	 <td width="22%" height="16" class="listtable_top">Your Value</td>
   </tr>
@@ -139,28 +139,29 @@ if (isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port
 	<td width="22%" height="16" class="listtable_top">N/A</td>
 	<td width="22%" height="16" class="listtable_1"><b>Mysql 5.5 or MariaDB 10.0.5</b></td>
 	<?php
+		// Ensure $sql_version is defined
+		if (!isset($sql_version)) {
+			$sql_version = '0.0.0';
+		}
+
         //our SQL is using FULLTEXT in inno DB.
         //this is only supported from Mysql 5.5 onwards
         //and  >= MariaDB 10.0.5 ( https://mariadb.com/kb/en/full-text-index-overview/ )
-	if (strpos($sql_version, 'MARIADB') !== false){
-           	 //we have a mariadb.
-		//check for versions below 10.0.5
-		if(version_compare($sql_version, "10.0.5", "<")){
-			$class = "red";
-			$errors++;
-		}else{
-			$class = "green";
-		}
-        }else{
-            //other DB (presumably mysql)
-            //check for stuff lower then 5.5
-            if(version_compare($sql_version, "5.5", "<")) {
-				$class = "red";
-				$errors++;
-            }else{
-				$class = "green";
+		if (!empty($sql_version) && strpos($sql_version, 'MARIADB') !== false) {
+            if (version_compare($sql_version, '10.0.5') != -1) {
+                $class = "green";
+            } else {
+                $class = "red";
+                $errors++;
             }
-	}
+        }
+		// other DB (presumably mysql) - check for stuff lower then 5.5
+		elseif (!empty($sql_version) && strpos($sql_version, '5.5') != -1 || strpos($sql_version, '10.0.5') != -1) {
+            $class = "green";
+        } else {
+            $class = "red";
+            $errors++;
+        }
 	?>
 	<td width="22%" height="16" class="<?php echo $class?>"><?php echo $sql_version;?></td>
   </tr>
@@ -176,7 +177,7 @@ if (isset($_POST['username'], $_POST['password'], $_POST['server'], $_POST['port
 <table width="98%" cellspacing="0" cellpadding="0" align="center" class="listtable" style="margin-top:3px;">
   <tr>
   <td width="33%" height="16" class="listtable_top">Setting</td>
-	<td width="22%" height="16" class="listtable_top">Recomended</td>
+	<td width="22%" height="16" class="listtable_top">Recommended</td>
 	<td width="22%" height="16" class="listtable_top">Required</td>
 	 <td width="22%" height="16" class="listtable_top">Your Value</td>
   </tr>
