@@ -1,11 +1,11 @@
 project:
-  sourceknight: 0.1
+  sourceknight: 0.2
   name: SBPP
   dependencies:
     - name: sourcemod
       type: tar
-      version: 1.11.0-git6934
-      location: https://sm.alliedmods.net/smdrop/1.11/sourcemod-1.11.0-git6934-linux.tar.gz
+      version: 1.11.0-git6969
+      location: https://sm.alliedmods.net/smdrop/1.11/sourcemod-1.11.0-git6969-linux.tar.gz
       unpack:
       - source: /addons
         dest: /addons
