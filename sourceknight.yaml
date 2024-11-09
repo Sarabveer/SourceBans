@@ -5,7 +5,7 @@ project:
     - name: sourcemod
       type: tar
       version: 1.12.0-git7165
-      location: https://sm.alliedmods.net/smdrop/1.11/sourcemod-1.12.0-git7165-linux.tar.gz
+      location: https://sm.alliedmods.net/smdrop/1.12/sourcemod-1.12.0-git7165-linux.tar.gz
       unpack:
       - source: /addons
         dest: /addons
