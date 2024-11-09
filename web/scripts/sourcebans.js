@@ -1,7 +1,7 @@
 /*************************************************************************
 This file is part of SourceBans++
 
-SourceBans++ (c) 2014-2019 by SourceBans++ Dev Team
+SourceBans++ (c) 2014-2024 by SourceBans++ Dev Team
 
 The SourceBans++ Web panel is licensed under a
 Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
@@ -765,6 +765,41 @@ function process_edit_server()
 	document.forms.editserver.submit();
 }
 
+const handleSteamIDSearch = async (steamInput, searchType, searchPath) => {
+	try {
+		const response = await fetch('includes/SteamID/Force_Steam2.php',
+		{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				steamid: steamInput
+			})
+		});
+
+		if (!response.ok)
+		{
+			window.location = `index.php?${searchPath}&advSearch=${steamInput}&advType=${searchType}`;
+			return;
+		}
+		const data = await response.json();
+		if (data.success)
+		{
+			const input = data.steam2id;
+			window.location = `index.php?${searchPath}&advSearch=${input}&advType=${searchType}`;
+		}
+		else
+		{
+			// Conversion failed - continue with the search
+			window.location = `index.php?${searchPath}&advSearch=${steamInput}&advType=${searchType}`;
+		}
+	} catch (error) {
+		// Error while fetching the SteamID conversion script - continue with the search
+		window.location = `index.php?${searchPath}&advSearch=${steamInput}&advType=${searchType}`;
+	}
+};
+
 function search_bans()
 {
 	let type = '';
@@ -778,6 +813,12 @@ function search_bans()
 	{
 		type = (document.getElementById('steam_match').value == '1' ? 'steam' : 'steamid');
 		input = $('steamid').value;
+
+		if (input.trim() !== '')
+		{
+			handleSteamIDSearch(input, type, 'p=banlist');
+			return;
+		}
 	}
 	if($('ip_').checked)
 	{
@@ -863,6 +904,12 @@ function search_admins()
 	{
 		type = (document.getElementById('steam_match').value == '1' ? 'steam' : 'steamid');
 		input = $('steamid').value;
+
+		if (input.trim() !== '')
+		{
+			handleSteamIDSearch(input, type, 'p=admin&c=admins');
+			return;
+		}
 	}
 	if($('admemail_').checked)
 	{
@@ -1398,6 +1445,12 @@ function search_blocks()
 	{
 		type = (document.getElementById('steam_match').value == '1' ? 'steam' : 'steamid');
 		input = $('steamid').value;
+
+		if (input.trim() !== '')
+		{
+			handleSteamIDSearch(input, type, 'p=commslist');
+			return;
+		}
 	}
 	if($('reason_').checked)
 	{

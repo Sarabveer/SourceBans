@@ -4,6 +4,10 @@ namespace SteamID;
 use Database;
 use Exception;
 
+// Require the calculation classes
+require_once __DIR__ . '/calc/GMP.php';
+require_once __DIR__ . '/calc/BCMATH.php';
+
 /**
  * Class SteamID
  *
@@ -102,6 +106,8 @@ class SteamID
             return 'Steam2';
         case preg_match("/\[U:1:\d*\]/", $steamid):
             return 'Steam3';
+        case preg_match("/U:1:\d*/", $steamid):
+                return 'Steam3';
         case preg_match("/\d{17}/", $steamid):
             return 'Steam64';
         default:
@@ -118,6 +124,7 @@ class SteamID
         switch (true) {
         case preg_match("/STEAM_[0|1]:[0:1]:\d*/", $steamid):
         case preg_match("/\[U:1:\d*\]/", $steamid):
+        case preg_match("/U:1:\d*/", $steamid):
         case preg_match("/\d{17}/", $steamid):
             return true;
         default:

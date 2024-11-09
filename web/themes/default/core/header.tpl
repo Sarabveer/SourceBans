@@ -19,17 +19,48 @@
                 </a>
             </div>
             <div id="search">
-                {literal}
-                <form method="get" action="index.php">
+                <form method="get" action="index.php" onsubmit="validateForm(this)">
                     <input type="hidden" name="p" value="banlist" />
-                    <input class="searchbox" alt="Search Bans" name="searchText" type="text" onfocus="this.value='';" onblur="if (this.value=='') {this.value=' Search Bans...';}" value=" Search Bans..." />
+                    <input class="searchbox" alt="Search Bans" name="searchText" type="text" onfocus="this.value='';" {literal}onblur="if (this.value=='') {this.value=' Search Bans...';}"{/literal} value=" Search Bans..." />
                     <input type="submit" name="Submit" value="Search" style="cursor:pointer;" class="button" />
                 </form>
-                <form method="get" action="index.php">
+                <form method="get" action="index.php" onsubmit="validateForm(this)">
                     <input type="hidden" name="p" value="commslist" />
-                    <input class="searchbox" alt="Search Comms" name="searchText" type="text" onfocus="this.value='';" onblur="if (this.value=='') {this.value=' Search Comms...';}" value=" Search Comms... " />
+                    <input class="searchbox" alt="Search Comms" name="searchText" type="text" onfocus="this.value='';" {literal}onblur="if (this.value=='') {this.value=' Search Comms...';}"{/literal} value=" Search Comms... " />
                     <input type="submit" name="Submit" value="Search" style="cursor:pointer;" class="button" />
                 </form>
-                {/literal}
             </div>
         </div>
+
+    {literal}
+    <script>
+        // Based on sourcebans.js
+        function isValidID(steamid) {
+            const regexes = [
+                /STEAM_[0|1]:[0:1]:\d*/,
+                /$U:1:\d*$/,
+                /U:1:\d*/,
+                /\d{17}/
+            ];
+            return regexes.some(regex => regex.test(steamid));
+        }
+
+        // Verify input data and dynamiclly adjust search
+        function validateForm(form) {
+            const searchInput = form.querySelector('.searchbox');
+            const submitButton = form.querySelector('.button');
+			const pageValue = form.querySelector('input[name="p"]').value;
+
+            if (isValidID(searchInput.value)) {
+                searchInput.name = 'advSearch';
+                submitButton.name = 'advType';
+                submitButton.value = 'steamid';
+				handleSteamIDSearch(searchInput.value, 'steamid', `p=${pageValue}`);
+            } else {
+                searchInput.name = 'searchText';
+                submitButton.name = 'Submit';
+                submitButton.value = 'Search';
+            }
+        }
+    </script>
+    {/literal}
