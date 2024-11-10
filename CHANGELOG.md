@@ -10,7 +10,7 @@ Legend:
 ? = Other stuff
 ```
 
-(16/09/24): Version 1.8.1 (**Run updater required**)
+(10/11/24): Version 1.8.1 (**Run updater required**)
 -----------------------
 > [!IMPORTANT]
 > This is a security release and we recommend to upgrade as soon as possible.
@@ -21,6 +21,12 @@ Legend:
 04. * Locking account for 10 minutes if wrong password multiple times (x5)
 05. ! Verify if user is already logged before display login page
 06. ! Ignore chat triggers for interactive ban reason #974
+07. * Checker: configure client connect message output #993
+08. ! Support new line in comments #994
+09. ? CI: Build with latest SM 1.12 stable version #1003
+10. ! Tab navigation logic and validation in admin panel #1004
+11. + Extend input compatibility to all steam id formats
+12. ? Bump Font Awesome to 6.6.0 #1005
 ```
 
 (18/02/23): Version 1.8.0
