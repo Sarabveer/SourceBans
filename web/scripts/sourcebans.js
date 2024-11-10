@@ -65,14 +65,14 @@ function ProcessAdminTabs()
 	const pos = url.indexOf('^') + 1;
 	const tabNo = url.charAt(pos);
 
-	if(Number.isInteger(tabNo))
+	if (!isNaN(utabNo))
 		swapTab(tabNo);
 
 	const upos = url.indexOf('~') + 1;
 	const utabNo = url.charAt(upos + 1);
 	const utabType = url.charAt(upos);
 
-	if(Number.isInteger(utabNo))
+	if (!isNaN(utabNo))
 		Swap2ndPane(utabNo, utabType);
 }
 
@@ -1472,6 +1472,6 @@ function openTab(event, target) {
 
 function swapTab(tab) {
 	const menu = document.getElementById('admin-page-menu').children;
-	if(Number.isInteger(tab) && tab <= menu.length)
+	if(!isNaN(tab) && tab <= menu.length)
 		menu[tab].click();
 }
