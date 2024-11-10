@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>{$title}</title>
     <link rel="Shortcut Icon" href="themes/{$theme}/images/favicon.ico" />
-    <script type="text/javascript" src="./scripts/fontawesome-all.min.js"></script>
+    <script type="text/javascript" src="./scripts/fontawesome.min.js"></script>
     <script type="text/javascript" src="./scripts/sourcebans.js"></script>
     <link href="themes/{$theme}/css/main.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="./scripts/mootools.js"></script>

@@ -25,6 +25,6 @@ Plese select the file to upload. The file must either be {$formats} file format.
 	margin: 0 0.5em;" type="submit"><i class="fas fa-save"></i> Save</button>
 
 </form>
-<script type="text/javascript" src="../scripts/fontawesome-all.min.js"></script>
+<script type="text/javascript" src="../scripts/fontawesome.min.js"></script>
 </body>
 </html>
