@@ -1,7 +1,7 @@
 /*************************************************************************
 This file is part of SourceBans++
 
-SourceBans++ (c) 2014-2019 by SourceBans++ Dev Team
+SourceBans++ (c) 2014-2024 by SourceBans++ Dev Team
 
 The SourceBans++ Web panel is licensed under a
 Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
@@ -188,39 +188,41 @@ function FadeElIn(id, time)
 function DoLogin(redir)
 {
 	let err = 0;
-	if(!$('loginUsername').value)
-	{
-		$('loginUsername.msg').setHTML('You must enter your loginname!');
+	
+	// Get input values
+	let username = document.getElementById('loginUsername').value;
+	let password = document.getElementById('loginPassword').value;
+	let remember = document.getElementById('loginRememberMe').checked;
+	
+	// Validate username
+	if (!username) {
+		$('loginUsername.msg').setHTML('You must enter your login name!');
 		$('loginUsername.msg').setStyle('display', 'block');
 		err++;
-	}
-	else
-	{
+	} else {
 		$('loginUsername.msg').setHTML('');
 		$('loginUsername.msg').setStyle('display', 'none');
 	}
 
-	if(!$('loginPassword').value)
-	{
+	// Validate password
+	if (!password) {
 		$('loginPassword.msg').setHTML('You must enter your password!');
 		$('loginPassword.msg').setStyle('display', 'block');
 		err++;
-	}
-	else
-	{
+	} else {
 		$('loginPassword.msg').setHTML('');
 		$('loginPassword.msg').setStyle('display', 'none');
 	}
 
-	if(err)
-		return 0;
+	if (err)
+		return false;
 
-	if(redir == 'undefined')
+	// If redir is not provided or is 'undefined', set it to an empty string
+	if (typeof redir === 'undefined')
 		redir = '';
-	xajax_Plogin(document.getElementById('loginUsername').value,
-		document.getElementById('loginPassword').value,
-				 document.getElementById('loginRememberMe').checked,
-				 redir);
+	
+	// Call xajax_Plogin function
+	xajax_Plogin(username, password, remember, redir);
 }
 
 function SlideUp(id)

@@ -5,13 +5,14 @@ class NormalAuthHandler
     private $result = false;
 
     public function __construct(
-        private ?Database $dbs,
-        string $username, string $password, bool $remember)
+        private $dbs,
+        string $username, string $password, bool $remember
+    )
     {
         $this->dbs = $dbs;
         $user = $this->getInfosFromDatabase($username);
 
-        $maxlife = (($remember) ? Config::get('auth.maxlife.remember') : Config::get('auth.maxlife'))*60;
+        $maxlife = (($remember) ? Config::get('auth.maxlife.remember') : Config::get('auth.maxlife')) * 60;
 
         if (!$user || empty($password))
             return;
@@ -48,16 +49,41 @@ class NormalAuthHandler
 
     private function updatePasswordHash(string $password, int $aid)
     {
-        $this->dbs->query("UPDATE `:prefix_admins` SET password = :password WHERE aid = :aid");
-        $this->dbs->bind(':aid', $aid, \PDO::PARAM_INT);
-        $this->dbs->bind(':password', password_hash($password, PASSWORD_BCRYPT), \PDO::PARAM_STR);
-        $this->dbs->execute();
+        $query = "UPDATE ".DB_PREFIX."_admins SET password = ? WHERE aid = ?";
+        $stmt = $this->dbs->Prepare($query);
+
+        if (!$stmt) {
+            error_log("Failed to prepare SQL query for updating password: " . implode(" ", $this->dbs->errorInfo()));
+            return false;
+        }
+
+        $result = $this->dbs->Execute($stmt, array(password_hash($password, PASSWORD_BCRYPT), $aid));
+
+        if (!$result) {
+            error_log("Failed to execute SQL query for updating password: " . implode(" ", $this->dbs->errorInfo()));
+            return false;
+        }
+
+        return true;
     }
 
     private function getInfosFromDatabase(string $username)
     {
-        $this->dbs->query("SELECT aid, password FROM `:prefix_admins` WHERE user = :username");
-        $this->dbs->bind(':username', $username, \PDO::PARAM_STR);
-        return $this->dbs->single();
+        $query = "SELECT aid, password FROM ".DB_PREFIX."_admins WHERE user = ?";
+        $stmt = $this->dbs->Prepare($query);
+
+        if (!$stmt) {
+            error_log("Failed to prepare SQL query: " . implode(" ", $this->dbs->errorInfo()));
+            return false;
+        }
+
+        $result = $this->dbs->Execute($stmt, array($username));
+
+        if (!$result) {
+            error_log("Failed to execute SQL query: " . implode(" ", $this->dbs->errorInfo()));
+            return false;
+        }
+
+        return $result->fetchRow();
     }
 }

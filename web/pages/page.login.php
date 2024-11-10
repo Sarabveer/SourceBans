@@ -23,46 +23,54 @@ if (!defined("IN_SB")) {
 }
 
 global $userbank, $theme;
+
+// Check if the user is already logged in
+if ($userbank->is_logged_in()) {
+    echo "<script>window.location.href = 'index.php';</script>"; // Redirect to the main page using JavaScript
+    exit;
+}
+
+// Handle messages based on query parameters
 if (isset($_GET['m'])) {
     $lostpassword_url = Host::complete() . '/index.php?p=lostpassword';
     switch ($_GET['m']) {
         case 'no_access':
             echo <<<HTML
-				<script>
-					ShowBox(
-						'Error - No Access',
-						'You dont have permission to access this page.<br />' +
-						'Please login with an account that has access.',
-						'red', '', false
-					);
-				</script>
+                <script>
+                    ShowBox(
+                        'Error - No Access',
+                        'You don\'t have permission to access this page.<br />' +
+                        'Please login with an account that has access.',
+                        'red', '', false
+                    );
+                </script>
 HTML;
             break;
 
         case 'empty_pwd':
             echo <<<HTML
-				<script>
-					ShowBox(
-						'Information',
-						'You are unable to login because your account have an empty password set.<br />' +
-						'Please <a href="$lostpassword_url">restore your password</a> or ask an admin to do that for you.<br />' +
-						'Do note that you are required to have a non empty password set event if you sign in through Steam.',
-						'blue', '', true
-					);
-				</script>
+                <script>
+                    ShowBox(
+                        'Information',
+                        'You are unable to login because your account has an empty password set.<br />' +
+                        'Please <a href="$lostpassword_url">restore your password</a> or ask an admin to do that for you.<br />' +
+                        'Do note that you are required to have a non-empty password set even if you sign in through Steam.',
+                        'blue', '', true
+                    );
+                </script>
 HTML;
             break;
 
         case 'failed':
             echo <<<HTML
-    			<script>
-    				ShowBox(
+                <script>
+                    ShowBox(
                         'Error',
-    					'The username or password you supplied was incorrect.<br \>'+
+                        'The username or password you supplied was incorrect.<br />' +
                         'If you have forgotten your password, use the <a href="$lostpassword_url">Lost Password</a> link.',
-    					'red', '', false
-    				);
-    			</script>
+                        'red', '', false
+                    );
+                </script>
 HTML;
             break;
 
@@ -71,11 +79,26 @@ HTML;
                 <script>
                     ShowBox(
                         'Error',
-                        'Steam login was sucessful, but your SteamID isn\'t associated with any account.',
+                        'Steam login was successful, but your SteamID isn\'t associated with any account.',
                         'red', '', false
                     );
                 </script>
 HTML;
+            break;
+
+        case 'locked':
+            if (isset($_GET['time'])) {
+                $remainingTime = intval($_GET['time']);
+                echo <<<HTML
+                    <script>
+                        ShowBox(
+                            'Account Locked',
+                            'Your account is temporarily locked due to too many failed login attempts. Please try again in approximately $remainingTime minutes.',
+                            'red', '', false
+                        );
+                    </script>
+HTML;
+            }
             break;
     }
 }

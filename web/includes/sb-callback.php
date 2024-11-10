@@ -105,23 +105,149 @@ function Plogin(string $username, string $password, string $remember = '', strin
 {
     global $userbank;
     $objResponse = new xajaxResponse();
+    
+    // Check if "Normal Login" is enabled - If not stop here.
+    if (!Config::getBool('config.enablesteamlogin')) {
+        $objResponse->addRedirect("?p=login&m=failed", 0);
+        Log::add("w", "Hacking attempt", "Attempted to contect via Normal Auth when the feature is disabled.");
+        return $objResponse;
+    }
+    
+    // Initialize session if not already started
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
+    // Rate limiting configuration
+    $maxAttempts = 5;
+    $lockoutTime = 10 * 60; // 10 minutes lockout
+
+    // Retrieve user from database
+    $user = getUserFromDatabase($username);
+    if (!$user) {
+        $objResponse->addRedirect("?p=login&m=failed", 0);
+        return $objResponse;
+    }
+
+    // Check if user is currently locked out
+    if ($user['lockout_until'] && strtotime($user['lockout_until']) > time()) {
+        $remainingTime = (strtotime($user['lockout_until']) - time()) / 60;
+        $objResponse->addRedirect("?p=login&m=locked&time=" . round($remainingTime), 0);
+        return $objResponse;
+    }
+
+    // Basic input validation
     if (empty($password)) {
         $objResponse->addRedirect('?p=login&m=empty_pwd', 0);
         return $objResponse;
     }
 
+    // Convert remember option to boolean
     $remember = ($remember === 'true') ? true : false;
 
-    $auth = new NormalAuthHandler($GLOBALS['PDO'], $username, $password, $remember);
+    $auth = new NormalAuthHandler($GLOBALS['db'], $username, $password, $remember);
 
     if (!$auth->getResult()) {
-        $objResponse->addRedirect("?p=login&m=failed",  0);
+        // Increment login attempts and set lockout if needed
+        incrementLoginAttempts($username);
+
+        // Retrieve updated user information
+        $user = getUserFromDatabase($username);
+        if ($user['attempts'] >= $maxAttempts) {
+            $lockoutUntil = date('Y-m-d H:i:s', time() + $lockoutTime);
+            setLockout($username, $lockoutUntil);
+            $objResponse->addRedirect("?p=login&m=locked&time=" . round($lockoutTime / 60), 0);
+            return $objResponse;
+        }
+
+        $objResponse->addRedirect("?p=login&m=failed", 0);
         return $objResponse;
     }
 
-    $objResponse->addRedirect("?".$redirect,  0);
+    // Successful login
+    resetLoginAttempts($username);
+    $objResponse->addRedirect("?".$redirect, 0);
     return $objResponse;
+}
+
+function getUserFromDatabase($username)
+{
+    $query = "SELECT aid, password, attempts, lockout_until FROM ".DB_PREFIX."_admins WHERE user = ?";
+    $stmt = $GLOBALS['db']->Prepare($query);
+
+    if (!$stmt) {
+        error_log("Failed to prepare SQL query for getting user from database.");
+        return false;
+    }
+
+    $result = $GLOBALS['db']->Execute($stmt, array($username));
+
+    if (!$result) {
+        error_log("Failed to execute SQL query for getting user from database.");
+        return false;
+    }
+
+    return $result->fetchRow();
+}
+
+function incrementLoginAttempts($username)
+{
+    $query = "UPDATE ".DB_PREFIX."_admins SET attempts = attempts + 1 WHERE user = ?";
+    $stmt = $GLOBALS['db']->Prepare($query);
+
+    if (!$stmt) {
+        error_log("Failed to prepare SQL query for incrementing login attempts.");
+        return false;
+    }
+
+    $result = $GLOBALS['db']->Execute($stmt, array($username));
+
+    if (!$result) {
+        error_log("Failed to execute SQL query for incrementing login attempts.");
+        return false;
+    }
+
+    return true;
+}
+
+function resetLoginAttempts($username)
+{
+    $query = "UPDATE ".DB_PREFIX."_admins SET attempts = 0, lockout_until = NULL WHERE user = ?";
+    $stmt = $GLOBALS['db']->Prepare($query);
+
+    if (!$stmt) {
+        error_log("Failed to prepare SQL query for resetting login attempts.");
+        return false;
+    }
+
+    $result = $GLOBALS['db']->Execute($stmt, array($username));
+
+    if (!$result) {
+        error_log("Failed to execute SQL query for resetting login attempts.");
+        return false;
+    }
+
+    return true;
+}
+
+function setLockout($username, $lockoutUntil)
+{
+    $query = "UPDATE ".DB_PREFIX."_admins SET lockout_until = ? WHERE user = ?";
+    $stmt = $GLOBALS['db']->Prepare($query);
+
+    if (!$stmt) {
+        error_log("Failed to prepare SQL query for setting lockout.");
+        return false;
+    }
+
+    $result = $GLOBALS['db']->Execute($stmt, array($lockoutUntil, $username));
+
+    if (!$result) {
+        error_log("Failed to execute SQL query for setting lockout.");
+        return false;
+    }
+
+    return true;
 }
 
 /**
@@ -137,7 +263,7 @@ function LostPassword(string $email)
 
     if (empty($result['aid'])) {
         $objResponse->addScript(
-            "ShowBox('Check E-Mail', 'If your email is registered, you will receive a password reset link shortly. Please check your email inbox (and spam).', 'blue', '');"
+            "ShowBox('Error', 'The email address you supplied is not registered on the system', 'red', '');"
         );
         return $objResponse;
     }
@@ -158,7 +284,7 @@ function LostPassword(string $email)
 
     if ($isEmailSent) {
         $objResponse->addScript(
-            "ShowBox('Check E-Mail', 'If your email is registered, you will receive a password reset link shortly. Please check your email inbox (and spam).', 'blue', '');"
+            "ShowBox('Check E-Mail', 'Please check your email inbox (and spam) for a link which will help you reset your password.', 'blue', '');"
         );
     } else {
       $objResponse->addScript("ShowBox('Error', 'Error sending email.', 'red', '')");
@@ -1388,7 +1514,7 @@ function ServerHostPlayers($sid, $type="servers", $obId="", $tplsid="", $open=""
     try {
         $query->Connect($server['ip'], $server['port'], 1, SourceQuery::SOURCE);
         $info = $query->GetInfo();
-		$info['HostName'] = preg_replace('/[\x00-\x1f]/','', htmlspecialchars($info['HostName']));
+        $info['HostName'] = preg_replace('/[\x00-\x1f]/','', htmlspecialchars($info['HostName']));
         $players = $query->GetPlayers();
     } catch (Exception $e) {
         if ($userbank->HasAccess(ADMIN_OWNER)) {

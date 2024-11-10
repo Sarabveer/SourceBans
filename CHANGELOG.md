@@ -10,6 +10,19 @@ Legend:
 ? = Other stuff
 ```
 
+(16/09/24): Version 1.8.1 (**Run updater required**)
+-----------------------
+> [!IMPORTANT]
+> This is a security release and we recommend to upgrade as soon as possible.
+```
+01. ! XAJAX API 'Plogin' Vulnerable to Brute Force Attacks #990
+02. ! XAJAX API 'Plogin' can bypass disabled 'Enable Normal Login' #989
+03. ! Vulnerability in Forgot Password implementation #975
+04. * Locking account for 10 minutes if wrong password multiple times (x5)
+05. ! Verify if user is already logged before display login page
+06. ! Ignore chat triggers for interactive ban reason #974
+```
+
 (18/02/23): Version 1.8.0
 -----------------------
 ```
