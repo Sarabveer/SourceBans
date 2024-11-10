@@ -2,6 +2,7 @@
 <head>
 <title>Upload File : SourceBans</title>
 <link rel="Shortcut Icon" href="../images/favicon.ico" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.6.0/css/all.css">
 </head>
 <body bgcolor="e9e9e9" style="
 	background-repeat: repeat-x;
@@ -25,6 +26,5 @@ Plese select the file to upload. The file must either be {$formats} file format.
 	margin: 0 0.5em;" type="submit"><i class="fas fa-save"></i> Save</button>
 
 </form>
-<script type="text/javascript" src="../scripts/fontawesome.min.js"></script>
 </body>
 </html>
