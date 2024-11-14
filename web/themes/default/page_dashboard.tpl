@@ -79,10 +79,10 @@
                 <td width="25%" height="16" class="listtable_1">{$player.date}</td>
                 <td height="16" class="listtable_1">
                     {if empty($player.short_name)}
-                    <span class="text:italic">No nickname present</span>
-                  {else}
-                    <span>{$player.short_name|escape:'html'}</span>
-                  {/if}
+                        <i><font color="#677882">no nickname present</font></i>
+                    {else}
+                        <span>{$player.short_name|escape:'html'}</span>
+                    {/if}
                 </td>
             </tr>
         {/foreach}
