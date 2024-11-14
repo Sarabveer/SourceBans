@@ -192,7 +192,7 @@
                                     <td width="20%" height="16" class="listtable_1">Block length</td>
                                     <td height="16" class="listtable_1">{$ban.banlength}</td>
                                 </tr>
-                                {if isset($ban.unbanned)}
+                                {if isset($ban.unbanned) && ($ban.unbanned == true)}
                                     <tr align="left">
                                         <td width="20%" height="16" class="listtable_1">Unblock reason</td>
                                         <td height="16" class="listtable_1">
