@@ -15,18 +15,21 @@ Legend:
 > [!IMPORTANT]
 > This is a security release and we recommend to upgrade as soon as possible.
 ```
-01. ! XAJAX API 'Plogin' Vulnerable to Brute Force Attacks #990
-02. ! XAJAX API 'Plogin' can bypass disabled 'Enable Normal Login' #989
-03. ! Vulnerability in Forgot Password implementation #975
+01. ! XAJAX API 'Plogin' Vulnerable to Brute Force Attacks
+02. ! XAJAX API 'Plogin' can bypass disabled 'Enable Normal Login'
+03. ! Vulnerability in Forgot Password implementation
 04. * Locking account for 10 minutes if wrong password multiple times (x5)
 05. ! Verify if user is already logged before display login page
-06. ! Ignore chat triggers for interactive ban reason #974
-07. * Checker: configure client connect message output #993
-08. ! Support new line in comments #994
-09. ? CI: Build with latest SM 1.12 stable version #1003
-10. ! Tab navigation logic and validation in admin panel #1004
+06. ! Ignore chat triggers for interactive ban reason
+07. * Checker: configure client connect message output
+08. ! Support new line in comments
+09. ? CI: Build with latest SM 1.12 stable version
+10. ! Tab navigation logic and validation in admin panel
 11. + Extend input compatibility to all steam id formats
-12. ? Bump Font Awesome to 6.6.0 #1005
+12. ? Bump Font Awesome to 6.6.0
+13. ! Do not print unblock infos if block still active
+14. ! Prevent empty name on dashboard
+15. ! Clean player names of unwanted chars
 ```
 
 (18/02/23): Version 1.8.0
