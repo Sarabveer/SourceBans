@@ -38,7 +38,14 @@ $blcount               = 0;
 while (!$res->EOF) {
     $info               = [];
     $info['date']       = Config::time($res->fields[1]);
-    $info['name']       = stripslashes(filter_var($res->fields[0], FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_NO_ENCODE_QUOTES));
+    $raw_name           = stripslashes(filter_var($res->fields[0], FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_NO_ENCODE_QUOTES));
+    $cleaned_name       = mb_convert_encoding($raw_name, 'UTF-8', 'UTF-8');
+    $unwanted_sequences = ["\xF3\xA0\x80\xA1"];
+    foreach ($unwanted_sequences as $sequence) {
+        $cleaned_name = str_replace($sequence, '', $cleaned_name);
+    }
+    $cleaned_name       = str_replace($unwanted_sequence, '', $cleaned_name);
+    $info['name']       = htmlspecialchars(addslashes($cleaned_name), ENT_QUOTES, 'UTF-8');
     $info['short_name'] = trunc($info['name'], 40);
     $info['auth']       = $res->fields['authid'];
     $info['ip']         = $res->fields['ip'];
@@ -53,8 +60,12 @@ while (!$res->EOF) {
         $info['search_link'] = "index.php?p=banlist&advSearch=" . $info['auth'] . "&advType=steamid&Submit";
     }
     $info['link_url'] = "window.location = '" . $info['search_link'] . "';";
-    $info['name']     = htmlspecialchars(addslashes($info['name']), ENT_QUOTES, 'UTF-8');
-    $info['popup']    = "ShowBox('Blocked player: " . $info['name'] . "', '" . $info['name'] . " tried to enter<br />' + document.getElementById('" . $info['server'] . "').title + '<br />at " . $info['date'] . "<br /><div align=middle><a href=" . $info['search_link'] . ">Click here for ban details.</a></div>', 'red', '', true);";
+
+    // To print a name in the popup instead an empty string
+    if (empty($cleaned_name)) {
+        $cleaned_name = "<i>No nickname present</i>";
+    }
+    $info['popup']    = "ShowBox('Blocked player: " . $info['name'] . "', '" . $cleaned_name . " tried to enter<br />' + document.getElementById('" . $info['server'] . "').title + '<br />at " . $info['date'] . "<br /><div align=middle><a href=" . $info['search_link'] . ">Click here for ban details.</a></div>', 'red', '', true);";
 
     $GLOBALS['server_qry'] .= "xajax_ServerHostProperty(" . $res->fields['sid'] . ", 'block_" . $res->fields['sid'] . "_$blcount', 'title', 100);";
 
@@ -85,7 +96,14 @@ while (!$res->EOF) {
         $info['temp']     = true;
         $info['unbanned'] = false;
     }
-    $info['name']    = stripslashes($res->fields[3]);
+    $raw_name         = stripslashes($res->fields[3]);
+    $cleaned_name     = mb_convert_encoding($raw_name, 'UTF-8', 'UTF-8');
+    $unwanted_sequences = ["\xF3\xA0\x80\xA1"];
+    foreach ($unwanted_sequences as $sequence) {
+        $cleaned_name = str_replace($sequence, '', $cleaned_name);
+    }
+    $cleaned_name    = str_replace($unwanted_sequence, '', $cleaned_name);
+    $info['name']    = htmlspecialchars(addslashes($cleaned_name), ENT_QUOTES, 'UTF-8');
     $info['created'] = Config::time($res->fields['created']);
     $ltemp           = explode(",", $res->fields[6] == 0 ? 'Permanent' : SecondsToString(intval($res->fields[6])));
     $info['length']  = $ltemp[0];
@@ -144,7 +162,14 @@ while (!$res->EOF) {
         $info['temp']     = true;
         $info['unbanned'] = false;
     }
-    $info['name']        = stripslashes($res->fields[3]);
+    $raw_name             = stripslashes($res->fields[3]);
+    $cleaned_name         = mb_convert_encoding($raw_name, 'UTF-8', 'UTF-8');
+    $unwanted_sequences   = ["\xF3\xA0\x80\xA1"];
+    foreach ($unwanted_sequences as $sequence) {
+        $cleaned_name = str_replace($sequence, '', $cleaned_name);
+    }
+    $cleaned_name        = str_replace($unwanted_sequence, '', $cleaned_name);
+    $info['name']        = htmlspecialchars(addslashes($cleaned_name), ENT_QUOTES, 'UTF-8');
     $info['created']     = Config::time($res->fields['created']);
     $ltemp               = explode(",", $res->fields[6] == 0 ? 'Permanent' : SecondsToString(intval($res->fields[6])));
     $info['length']      = $ltemp[0];

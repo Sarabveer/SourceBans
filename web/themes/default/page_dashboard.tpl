@@ -77,7 +77,13 @@
             <tr{if $dashboard_lognopopup} onclick="{$player.link_url}"{else} onclick="{$player.popup}"{/if} onmouseout="this.className='tbl_out'" onmouseover="this.className='tbl_hover'" style="cursor: pointer;" id="{$player.server}" title="Querying Server Data...">
                 <td width="16" height="16" align="center" class="listtable_1"><i class="fas fa-ban fa-lg"></i></td>
                 <td width="25%" height="16" class="listtable_1">{$player.date}</td>
-                <td height="16" class="listtable_1">{$player.short_name|escape:'html'}</td>
+                <td height="16" class="listtable_1">
+                    {if empty($player.short_name)}
+                        <i><font color="#677882">no nickname present</font></i>
+                    {else}
+                        <span>{$player.short_name|escape:'html'}</span>
+                    {/if}
+                </td>
             </tr>
         {/foreach}
     </table>

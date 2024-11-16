@@ -29,10 +29,10 @@ define('theme_name', "SourceBans++ Default Theme");
 define('theme_author', "IceMan, SourceBans++ Dev Team");
 
 // Set the version of the theme here
-define('theme_version', "1.5.5-dev");
+define('theme_version', "1.8.0-dev");
 
 // Set the link of the theme here
-define('theme_link', "https://sbpp.sarabveer.me/");
+define('theme_link', "https://github.com/sbpp/sourcebans-pp");
 
 // Set the screenshot filename for your theme (must be inside your theme folder)
 // Must be:  250px wide  X 170px High

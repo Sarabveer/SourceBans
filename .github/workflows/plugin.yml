@@ -8,11 +8,15 @@ on:
       - php81
     tags:
       - '*'
+    paths:
+      - 'game/**'
   pull_request:
     branches:
       - main
       - master
       - php81
+    paths:
+      - 'game/**'
 
 jobs:
   build:
@@ -41,34 +45,43 @@ jobs:
       - name: Upload build archive for test runners
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ runner.os }}
+          name: package
           path: /tmp/package
 
   tag:
     name: Tag
     needs: build
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/php81')
     steps:
-      - uses: actions/checkout@v4
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/php81'
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: dev-drprasad/delete-tag-and-release@v1.1
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/php81'
+      - name: Delete existing 'latest' tag and release (Legacy tag)
+        uses: dev-drprasad/delete-tag-and-release@v1.1
         with:
           delete_release: true
           tag_name: latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: rickstaa/action-create-tag@v1
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/php81'
+      - name: Delete existing 'Plugins-Latest' tag and release (Current tag)
+        uses: dev-drprasad/delete-tag-and-release@v1.1
         with:
-          tag: "latest"
+          delete_release: true
+          tag_name: Plugins-Latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create tag
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: "Plugins-Latest"
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
   release:
     name: Release
-    if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/php81'
+    if: (github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/php81'))
     needs: [build, tag]
     runs-on: ubuntu-latest
     steps:
@@ -77,7 +90,7 @@ jobs:
 
       - name: Versioning
         run: |
-          version="latest"
+          version="Plugins-Latest"
           if [[ "${{ github.ref_type }}" == 'tag' ]]; then
             version=`echo $GITHUB_REF | sed "s/refs\/tags\///"`;
           fi
@@ -86,8 +99,8 @@ jobs:
       - name: Package
         run: |
           ls -Rall
-          if [ -d "./Linux/" ]; then
-            cd ./Linux/
+          if [ -d "./package/" ]; then
+            cd ./package/
             tar -czf ../${{ github.event.repository.name }}-${{ env.RELEASE_VERSION }}.tar.gz -T <(\ls -1)
             cd -
           fi
