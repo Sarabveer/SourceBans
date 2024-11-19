@@ -2,7 +2,7 @@
 <head>
 <title>Upload File : SourceBans</title>
 <link rel="Shortcut Icon" href="../images/favicon.ico" />
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.6.0/css/all.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.7.0/css/all.css">
 </head>
 <body bgcolor="e9e9e9" style="
 	background-repeat: repeat-x;
