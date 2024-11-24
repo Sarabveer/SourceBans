@@ -44,7 +44,7 @@ while (!$res->EOF) {
     foreach ($unwanted_sequences as $sequence) {
         $cleaned_name = str_replace($sequence, '', $cleaned_name);
     }
-    $cleaned_name       = str_replace($unwanted_sequence, '', $cleaned_name);
+    $cleaned_name = trim($cleaned_name);
     $info['name']       = htmlspecialchars(addslashes($cleaned_name), ENT_QUOTES, 'UTF-8');
     $info['short_name'] = trunc($info['name'], 40);
     $info['auth']       = $res->fields['authid'];
@@ -102,7 +102,7 @@ while (!$res->EOF) {
     foreach ($unwanted_sequences as $sequence) {
         $cleaned_name = str_replace($sequence, '', $cleaned_name);
     }
-    $cleaned_name    = str_replace($unwanted_sequence, '', $cleaned_name);
+    $cleaned_name = trim($cleaned_name);
     $info['name']    = htmlspecialchars(addslashes($cleaned_name), ENT_QUOTES, 'UTF-8');
     $info['created'] = Config::time($res->fields['created']);
     $ltemp           = explode(",", $res->fields[6] == 0 ? 'Permanent' : SecondsToString(intval($res->fields[6])));
@@ -168,7 +168,7 @@ while (!$res->EOF) {
     foreach ($unwanted_sequences as $sequence) {
         $cleaned_name = str_replace($sequence, '', $cleaned_name);
     }
-    $cleaned_name        = str_replace($unwanted_sequence, '', $cleaned_name);
+    $cleaned_name = trim($cleaned_name);
     $info['name']        = htmlspecialchars(addslashes($cleaned_name), ENT_QUOTES, 'UTF-8');
     $info['created']     = Config::time($res->fields['created']);
     $ltemp               = explode(",", $res->fields[6] == 0 ? 'Permanent' : SecondsToString(intval($res->fields[6])));
