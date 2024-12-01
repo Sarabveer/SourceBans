@@ -65,7 +65,7 @@ function ProcessAdminTabs()
 	const pos = url.indexOf('^') + 1;
 	const tabNo = url.charAt(pos);
 
-	if (!isNaN(utabNo))
+	if (!isNaN(tabNo))
 		swapTab(tabNo);
 
 	const upos = url.indexOf('~') + 1;
