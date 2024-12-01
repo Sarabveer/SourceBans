@@ -24,7 +24,7 @@
         "smarty/smarty": "~v5.4.1",
         "xpaw/php-source-query-class": "dev-master",
         "adodb/adodb-php": "5.22.7",
-        "symfony/mailer": "^6.0",
+        "symfony/mailer": "^7.2",
         "ext-pdo": "*",
         "ext-openssl": "*",
         "php": ">=8.1"
