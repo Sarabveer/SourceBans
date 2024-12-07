@@ -80,13 +80,13 @@ function BlockPlayer($check, int $sid, $num, $type, int $length)
         return $objResponse;
     }
 
-//    $GLOBALS['PDO']->query("SELECT ip, port FROM `:prefix_servers` WHERE sid = :sid");
-//    $GLOBALS['PDO']->bind(':sid', $sid);
-//    $sdata = $GLOBALS['PDO']->single();
+   $GLOBALS['PDO']->query("SELECT ip, port FROM `:prefix_servers` WHERE sid = :sid");
+   $GLOBALS['PDO']->bind(':sid', $sid);
+   $sdata = $GLOBALS['PDO']->single();
 
     // show hostname instead of the ip, but leave the ip in the title
     $hostsearch = preg_match_all('/hostname:[ ]*(.+)/', $ret, $hostname, PREG_PATTERN_ORDER);
-    $hostname   = trunc(htmlspecialchars($hostname[1][0]), 25);
+    $hostname   = trunc(htmlspecialchars($hostname[1][0] ?? ''), 25);
     if (!empty($hostname))
         $objResponse->addAssign("srvip_$num", "innerHTML", "<font size='1'><span title='" . $sdata['ip'] . ":" . $sdata['port'] . "'>" . $hostname . "</span></font>");
 
