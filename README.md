@@ -26,13 +26,13 @@ or read how to report issues effectively [here](https://coenjacobs.me/2013/12/06
 
 ```
 * Webserver
-  o PHP 8.1 or higher
+  o PHP 8.2 or higher
     * ini setting: memory_limit greater than or equal to 64M
     * GMP extension
   o MySQL 5.6 or MariaDB 10 and higher
 * Source Dedicated Server
   o MetaMod: Source
-  o SourceMod: Greater Than or Equal To 1.10
+  o SourceMod: Greater Than or Equal To 1.11
 ```
 
 ## How to install a SourceBans++ release version
