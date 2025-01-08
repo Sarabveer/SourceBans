@@ -45,6 +45,8 @@ public void __pl_sourcebanschecker_SetNTVOptional()
 {
 	MarkNativeAsOptional("SBPP_CheckerGetClientsBans");
 	MarkNativeAsOptional("SBPP_CheckerGetClientsComms");
+	MarkNativeAsOptional("SBPP_CheckerGetClientsMutes");
+	MarkNativeAsOptional("SBPP_CheckerGetClientsGags");
 }
 #endif
 
@@ -65,3 +67,19 @@ native int SBPP_CheckerGetClientsBans(int iClient);
  * @return        The number of comms bans of the client.
  *********************************************************/
 native int SBPP_CheckerGetClientsComms(int iClient);
+
+/*********************************************************
+ * Get the number of mutes of a client.
+ *
+ * @param iClient	The client index of who you want to get the number of mutes.
+ * @return        The number of mutes of the client.
+ *********************************************************/
+native int SBPP_CheckerGetClientsMutes(int iClient);
+
+/*********************************************************
+ * Get the number of gags of a client.
+ *
+ * @param iClient	The client index of who you want to get the number of gags.
+ * @return        The number of gags of the client.
+ *********************************************************/
+native int SBPP_CheckerGetClientsGags(int iClient);

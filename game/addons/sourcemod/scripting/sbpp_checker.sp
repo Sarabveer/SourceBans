@@ -29,20 +29,23 @@
 
 #include <sourcemod>
 
-#define VERSION "1.8.2"
+#define VERSION "1.8.3"
 #define LISTBANS_USAGE "sm_listbans <#userid|name> - Lists a user's prior bans from Sourcebans"
 #define LISTCOMMS_USAGE "sm_listcomms <#userid|name> - Lists a user's prior comms from Sourcebans"
 #define INVALID_TARGET -1
 #define Prefix "\x04[SourceBans++]\x01 "
 
+bool g_bLate = false;
 bool g_bPrintCheckOnConnect = true;
+
 char g_DatabasePrefix[10] = "sb";
+
 SMCParser g_ConfigParser;
 Database g_DB;
 
 int g_iBanCounts[MAXPLAYERS + 1];
-int g_iCommsCounts[MAXPLAYERS + 1];
-
+int g_iMuteCounts[MAXPLAYERS + 1];
+int g_iGagCounts[MAXPLAYERS + 1];
 
 public Plugin myinfo =
 {
@@ -64,6 +67,11 @@ public void OnPluginStart()
 	RegAdminCmd("sb_reload", OnReloadCmd, ADMFLAG_RCON, "Reload sourcebans config and ban reason menu options");
 
 	Database.Connect(OnDatabaseConnected, "sourcebans");
+
+	if (g_bLate)
+	{
+		LateLoading();
+	}
 }
 
 public void OnMapStart()
@@ -91,6 +99,10 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 
 	CreateNative("SBPP_CheckerGetClientsBans", Native_SBCheckerGetClientsBans);
 	CreateNative("SBPP_CheckerGetClientsComms", Native_SBCheckerGetClientsComms);
+	CreateNative("SBPP_CheckerGetClientsMutes", Native_SBCheckerGetClientsMutes);
+	CreateNative("SBPP_CheckerGetClientsGags", Native_SBCheckerGetClientsGags);
+
+	g_bLate = late;
 
 	return APLRes_Success;
 }
@@ -104,7 +116,19 @@ public int Native_SBCheckerGetClientsBans(Handle plugin, int numParams)
 public int Native_SBCheckerGetClientsComms(Handle plugin, int numParams)
 {
 	int client = GetNativeCell(1);
-	return g_iCommsCounts[client];
+	return g_iMuteCounts[client] + g_iGagCounts[client];
+}
+
+public int Native_SBCheckerGetClientsMutes(Handle plugin, int numParams)
+{
+	int client = GetNativeCell(1);
+	return g_iMuteCounts[client];
+}
+
+public int Native_SBCheckerGetClientsGags(Handle plugin, int numParams)
+{
+	int client = GetNativeCell(1);
+	return g_iGagCounts[client];
 }
 
 public void OnClientAuthorized(int client, const char[] auth)
@@ -118,32 +142,46 @@ public void OnClientAuthorized(int client, const char[] auth)
 
 	char query[512], ip[30];
 	GetClientIP(client, ip, sizeof(ip));
-	FormatEx(query, sizeof(query), "SELECT COUNT(bid) FROM %s_bans WHERE (type = 0 AND authid LIKE 'STEAM_%%:%s') UNION ALL SELECT COUNT(bid) FROM %s_bans WHERE (type = 1 AND ip = '%s') UNION ALL SELECT COUNT(bid) FROM %s_comms WHERE authid LIKE 'STEAM_%%:%s'", g_DatabasePrefix, auth[8], g_DatabasePrefix, ip, g_DatabasePrefix, auth[8]);
+	FormatEx(query, sizeof(query), 
+		"SELECT COUNT(bid) FROM %s_bans WHERE (type = 0 AND authid LIKE 'STEAM_%%:%s') \
+		UNION ALL \
+		SELECT COUNT(bid) FROM %s_bans WHERE (type = 1 AND ip = '%s') \
+		UNION ALL \
+		SELECT COUNT(bid) FROM %s_comms WHERE authid LIKE 'STEAM_%%:%s' AND type = 1 \
+		UNION ALL \
+		SELECT COUNT(bid) FROM %s_comms WHERE authid LIKE 'STEAM_%%:%s' AND type = 2",
+		g_DatabasePrefix, auth[8],
+		g_DatabasePrefix, ip,
+		g_DatabasePrefix, auth[8],
+		g_DatabasePrefix, auth[8]
+	);
+
 	g_DB.Query(OnConnectBanCheck, query, GetClientUserId(client), DBPrio_Low);
 }
 
 public void OnConnectBanCheck(Database db, DBResultSet results, const char[] error, any userid)
 {
 	int client = GetClientOfUserId(userid);
-	int steamIdBanCount = 0;
 	if (!client || results == null || !results.FetchRow())
 		return;
 
-	steamIdBanCount = results.FetchInt(0);
+	// SteamID bans
+	g_iBanCounts[client] = results.FetchInt(0);
 
-	int ipBanCount = 0;
-	if (results.FetchRow()) {
-		ipBanCount = results.FetchInt(0);
-	}
-	int bancount = steamIdBanCount + ipBanCount;
+	// IP bans
+	if (results.FetchRow())
+		g_iBanCounts[client] += results.FetchInt(0);
 
-	int commcount = 0;
-	if (results.FetchRow()) {
-		commcount = results.FetchInt(0);
-	}
+	// Mutes (type = 1)
+	if (results.FetchRow())
+		g_iMuteCounts[client] = results.FetchInt(0);
 
-	g_iBanCounts[client] = bancount;
-	g_iCommsCounts[client] = commcount;
+	// Gags (type = 2)
+	if (results.FetchRow())
+		g_iGagCounts[client] = results.FetchInt(0);
+
+	int bancount = g_iBanCounts[client];
+	int commcount = g_iMuteCounts[client] + g_iGagCounts[client];
 
 	if (!g_bPrintCheckOnConnect)
 		return;
@@ -604,4 +642,17 @@ public SMCResult ReadConfig_KeyValue(SMCParser smc, const char[] key, const char
 public SMCResult ReadConfig_EndSection(SMCParser smc)
 {
 	return SMCParse_Continue;
+}
+
+stock void LateLoading()
+{
+	char sSteam32ID[64];
+	for (int i = 1; i <= MaxClients; i++)
+	{
+		if (!IsClientConnected(i) || !IsClientInGame(i) || IsFakeClient(i) || !IsClientAuthorized(i))
+			continue;
+		
+		GetClientAuthId(i, AuthId_Steam2, sSteam32ID, sizeof(sSteam32ID));
+		OnClientAuthorized(i, sSteam32ID);
+	}
 }
